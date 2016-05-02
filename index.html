@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Screener-to-phaser Port</title>
+        <script src="phaser.min.js"></script>
+        <script src="Boot.js"></script>
+        <script src="Preloader.js"></script>
+        <script src="Menu.js"></script>
+        <script src="Instructions.js"></script>
+        <script src="Run.js"></script>
+        <script src="clock.js"></script>
+        <script src="common.js"></script>
+
+    </head>
+
+    <script type="text/javascript">
+
+    window.onload = function() {
+
+      //create the game and the game states
+      var game = new Phaser.Game(960, 600, Phaser.CANVAS, 'gameContainer')
+
+    	game.state.add('Boot', Game.Boot)
+    	game.state.add('Preloader', Game.Preloader)
+    	game.state.add('Menu', Game.Menu)
+    	game.state.add('Run', Game.Run)
+      game.state.add('Instructions', Game.Instructions)
+
+    	//	Now start the Boot state.
+    	game.state.start('Boot')
+
+    }
+
+    </script>
+
+    <body>
+    </body>
+</html>

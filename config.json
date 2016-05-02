@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Number Line",
+        "template":"phaser",
+        "run": [
+                "https://cdnjs.cloudflare.com/ajax/libs/phaser/2.4.6/phaser.min.js",
+                "https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.0/jquery.min.js",
+                "box2d-plugin-full.min.js",
+                "Boot.js",
+                "Preloader.js",
+                "Menu.js",
+                "Instructions.js",
+                "Run.js",
+                "problems.js"
+               ],
+        "exp_id": "number_line",
+        "cognitive_atlas_task_id": [],
+        "contributors": [
+                         "Jonathan Nicholas",
+                         "Christian Battista",
+                         "Vanessa Sochat"
+                        ],
+        "time":999,
+        "reference": "",
+        "publish":"True",
+        "deployment_variables": {"run":"//create the game and the game states\nvar game = new Phaser.Game(960, 600, Phaser.CANVAS, 'gameContainer')\nproblem_set='A'\ngame.state.add('Boot', Game.Boot)\ngame.state.add('Preloader', Game.Preloader)\ngame.state.add('Menu',Game.Menu)\ngame.state.add('Instructions', Game.Instructions)\ngame.state.add('Run', Game.Run)\n//Now start the Boot state.\ngame.state.start('Boot', true, false, problem_set)\n"}
+    }
+]
