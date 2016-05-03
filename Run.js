@@ -58,8 +58,6 @@ Game.Run.prototype = {
       var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
       var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
 
-      console.log(F);
-
       //TODO - make these one-shots to avoid button mashing
       F.onDown.add(this.n1_down, this);
       J.onDown.add(this.n2_down, this);
@@ -96,13 +94,16 @@ Game.Run.prototype = {
       this.difficulty = new Difficulty(params, this.grader, search_params, this.signal);
       this.difficulty.adjust();
       this.generate();
+      this.practice = new Practice(this.trial_clock,  this.difficulty, this.game);
 
       //now bind the events
       this.trial_clock.signal.add(function () {
         if (arguments[0] == 'trial') {
           this.difficulty.adjust();
           this.generate();
-          //console.log(this.ns);
+          if (this.practice.practice == true) {
+            this.practice.check();
+          }
         }
         else if (arguments[0] == 'stimulus') {
           n1_text.setText(this.ns[0]);

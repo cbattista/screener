@@ -70,6 +70,8 @@ function range(i) {
 	return r;
 }
 
+text_style = {font:'20px Arial', fill:'#FFFFFF', align:'center'};
+
 //EXPERIMENT FUNCTIONS
 Grader = function(streak_length, max_value){
 	this.max_value = max_value;
@@ -83,6 +85,7 @@ Grader = function(streak_length, max_value){
     }
     else {ACC = 0}
 
+		this.ACC = ACC;
     this.easyness = ACC - (RT / this.max_value);
     this.Es.push(this.easyness);
     l = this.Es.length;
@@ -240,7 +243,6 @@ Param_Space = function(params, signal) {
 	}
 
 	this.adjust = function (increments, random) {
-		console.log(increments);
 		//if we have an increment for each parameter
 		//adjust them all
 		if (increments.length == this.params.length) {
