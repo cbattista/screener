@@ -29,15 +29,15 @@ Game.Run.prototype = {
       this.game.time.advancedTiming = true;
       this.fps = this.game.time.desiredFps;
 
+      //MAKE THE TRIAL CLOCK
       durations = [0.5 * this.fps, 0.75 * this.fps, 1.5 * this.fps];
       this.trial_clock = new TrialClock(durations,
                                         ['ISI', 'fixation', 'stimulus'],
                                         this.signal);
 
+      //MAKE THE STIMULI
       var text_attrib = {font:'64px Arial', fill:'#FFFFFF', align:'center'};
-
-
-      //create the numbers
+      //create the numbers and fixation cross
       this.ns = ['N1', 'N2']; //just placeholder values
       var n1 = text_button(this.game, this, this.n1_down,
                       this.game.world.centerX - 200, this.game.world.centerY - 32,
@@ -45,14 +45,6 @@ Game.Run.prototype = {
       var n2 = text_button(this.game, this, this.n2_down,
                       this.game.world.centerX + 200, this.game.world.centerY - 32,
                       this.ns[1], text_attrib);
-
-      //buttons are clickable but let's also set a key handler (F and J)
-      var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
-      var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
-      F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
-      J.onDown.add(this.n2_down, this);
-
-      //create the fixation cross
       var cross = this.game.add.text(this.game.world.centerX,
                   this.game.world.centerY, '*', text_attrib);
       cross.anchor.set(0.5, 0.5);
@@ -62,29 +54,34 @@ Game.Run.prototype = {
       n2.visible = false;
       cross.visible = false;
 
-      //describe difficulty parameters
+      //MAKE THE BUTTON HANDLERS (F and J)
+      var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
+      var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
+      F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
+      J.onDown.add(this.n2_down, this);
+
+
+      //CREATE ADAPTIVE DIFFICULTY MANAGER
       params = [];
       params[0] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
                   24,25]; //number size
       params[1] = [0.25, 0.33, 0.5, 0.66, 0.75, 0.75, 0.9, 0.9]; //ratio
-
-      //stimulus settings
-      stimulus_attributes = {};
-      stimulus_attributes['big_side'] = {'items': ['left', 'right'], 'repeats': 3};
-      //attributes['con'] = ['con', 'incon', 3];
-
       //how to scale the difficulty
       search_params = [ [-1, -1], //if incorrect
                         [0.5, [2, 2]], //if easyness > 0.5
                         [0.25, [1, 1]], //if easyness > .25
                         [0.1, [1,-1]] //....
                       ];
-
-      this.stimulus = new Stimulus(stimulus_attributes);
       this.grader = new Grader(5, 1.5 * 1000);
       this.difficulty = new Difficulty(params, this.grader, search_params, this.signal);
-      this.difficulty.adjust();
-      this.generate();
+
+      //CREATE STIMULUS ATTRIBUTE RANDOMIZER
+      stimulus_attributes = {};
+      stimulus_attributes['big_side'] = {'items': ['left', 'right'], 'repeats': 3};
+      //attributes['con'] = ['con', 'incon', 3];
+      this.stimulus = new Stimulus(stimulus_attributes);
+
+      //CREATE PRACTICE MANAGER
       this.practice = new Practice(this.trial_clock,  this.difficulty, this.game);
 
       //EXPERIMENTAL LOGIC CONTROL
@@ -122,6 +119,9 @@ Game.Run.prototype = {
         }
 
       }, this);
+
+      //START IT UP!
+      this.generate();
       this.trial_clock.go();
       this.trial_clock.next();
     },
@@ -143,22 +143,19 @@ Game.Run.prototype = {
     },
 
     generate: function () {
+        //determine what the stimuli for a given trial should be
         n1 = this.difficulty.param_space.get(0);
         n2 = n1 / this.difficulty.param_space.get(1);
-
         n2 = Math.round(n2);
 
-        if (n1 == 0) {n1 = this.game.rnd.integerInRange(1, 20);}
-        if (n2 == 0) {n2 = this.game.rnd.integerInRange(1, 20);}
-
+        //avoid repeating the same numbers
         if (this.lastN1 == n1) {
           n1 += 2;
         }
-
         if (this.lastN2 == n2) {
           n2 += 5;
         }
-
+        //avoid ties
         if (n1 == n2) {
           n2 += 1;
         }
@@ -166,22 +163,19 @@ Game.Run.prototype = {
         //check for proper size ordering
         MIN = Math.min(n1, n2);
         MAX = Math.max(n1, n2);
-
         n1 = MIN;
         n2 = MAX;
-
         this.lastN1 = n1;
         this.lastN2 = n2;
 
+        //determine which side the big number should be on
         side = this.stimulus.next('big_side');
         this.CRESP = side;
-
         if (side == "right") {
           this.ns = [n1, n2];
         }
         else {
           this.ns = [n2, n1];
-
         }
     },
 
