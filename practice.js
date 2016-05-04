@@ -67,7 +67,6 @@ Practice = function(trial_clock, diff, game) {
 			//calculate practice accuracy
 			p_acc = this.ACC / this.count;
 			this.count = 0;
-			style = { "text-align": "center", "fill": "#FFF"};
 			var p_fail = false;
 
 			if (p_acc > .5) {
@@ -89,7 +88,7 @@ Practice = function(trial_clock, diff, game) {
 					text = this.instructions['practice_again'];
 				}
 			}
-			this.prac_text = this.game.add.text(this.game.world.centerX, this.game.world.centerY, text, text_style);
+			this.prac_text = this.game.add.text(this.game.world.centerX, this.game.world.centerY, text, ins_style);
 			this.prac_text.anchor.x=0.5;
 			this.prac_text.anchor.y=0.5;
 			instructions.wordWrap = true;

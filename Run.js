@@ -60,7 +60,6 @@ Game.Run.prototype = {
       F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
       J.onDown.add(this.n2_down, this);
 
-
       //CREATE ADAPTIVE DIFFICULTY MANAGER
       params = [];
       params[0] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
@@ -79,7 +78,7 @@ Game.Run.prototype = {
       stimulus_attributes = {};
       stimulus_attributes['big_side'] = {'items': ['left', 'right'], 'repeats': 3};
       //attributes['con'] = ['con', 'incon', 3];
-      this.stimulus = new Stimulus(stimulus_attributes);
+      this.stimulus = new Randomizer(stimulus_attributes);
 
       //CREATE PRACTICE MANAGER
       this.practice = new Practice(this.trial_clock,  this.difficulty, this.game);
@@ -190,12 +189,6 @@ Game.Run.prototype = {
         d = new Date()
         endTime = d.getTime()
 
-        that = this
-        setTimeout(function() {
-          that.game.world.remove(that.sumText)
-
-        }, 1000)
-
         //Let them know it's done...
         this.game.time.events.add(Phaser.Timer.SECOND * 1.5, function () {
           endText = this.game.add.text(480, 100, 'All done!',
@@ -206,10 +199,10 @@ Game.Run.prototype = {
 
     update: function() {
       this.trial_clock.update();
-      //console.log(this.trial_clock.frame);
     },
 
     render: function () {
+      //this will display the frame rate (should be 60...ish)
       this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
     }
 }
