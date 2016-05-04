@@ -1,5 +1,3 @@
-
-
 Practice = function(trial_clock, diff, game) {
 	this.practice = true;
 	this.count = 0;
@@ -17,17 +15,53 @@ Practice = function(trial_clock, diff, game) {
 
 	this.instructions = instructions;
 
-	//this.fb = feedback(screen);
+	//feedback sprites
+	this.correct = game.add.sprite(game.world.centerX, game.world.centerY, 'correct');
+	this.correct.anchor.x = 0.5;
+	this.correct.anchor.y = 0.5;
+	this.correct.visible = false;
+	this.incorrect = game.add.sprite(game.world.centerX, game.world.centerY, 'incorrect');
+	this.incorrect.anchor.x = 0.5;
+	this.incorrect.anchor.y = 0.5;
+	this.incorrect.visible = false;
 
+	//check accuracy of individual trial and give feedback
 	this.check = function() {
+		//we do this to suppress the easyness streak calculation
+		//otherwise we may quit early if makes a lot of mistakes during practice
+		this.diff.grader.Es = [];
+
 		//this.fb.visible = false;
 		this.count += 1;
-		this.ACC += this.ACC + this.diff.grader.ACC;
+		console.log(this.count);
+		this.ACC += this.diff.grader.ACC;
 
-		//determine whether to keep practicing...
+		//provide the feedback
+		if (this.diff.grader.ACC == 1) {
+			this.correct.visible = true;
+		}
+		else {
+			this.incorrect.visible = true;
+		}
+
+		//pause the clock for 400 ms
+		this.trial_clock.stop();
+
+		this.game.time.events.add(Phaser.Timer.SECOND * 0.4, function () {
+			this.correct.visible = false;
+			this.incorrect.visible = false;
+			this.trial_clock.go();
+			this.check_complete();
+		}, this)
+	};
+
+	//determine whether to keep practicing...
+	this.check_complete = function() {
+
 		if (this.count >= 5) {
-			var trial_clock = this.trial_clock;
-			trial_clock.stop();
+			this.trial_clock.stop();
+
+			//reset the grading system
 			this.diff.param_space.reset();
 
 			//calculate practice accuracy
@@ -49,7 +83,7 @@ Practice = function(trial_clock, diff, game) {
 				}
 
 				else {
-					this.count = 0;
+					this.count = -1; //TODO - keep trial counter from incrementing
 					this.ACC = 0;
 					this.practice = true;
 					text = this.instructions['practice_again'];
@@ -60,27 +94,31 @@ Practice = function(trial_clock, diff, game) {
 			this.prac_text.anchor.y=0.5;
 			instructions.wordWrap = true;
 			instructions.wordWrapWidth = window.innerWidth - 400;
-    	//ain't nothin' but a scope thing
-    	var trial_clock = this.trial_clock;
+
 			space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
     	if (p_fail == false) {
 				space.onDown.add(function () {
-					this.diff.grader.Es = [];
-					trial_clock.reset();
-					trial_clock.go();
+					this.trial_clock.restart();
+					//this.trial_clock.reset();
+					this.trial_clock.go();
 					this.prac_text.kill();
 				}, this);
 
 			} else {
-				span.onDown.add(function(e) {
+				space.onDown.add(function(e) {
           if (e.key == Crafty.keys.SPACE) {
+						this.prac_text.kill();
 						this.trial_clock.signal.dispatch('end_task');
           }
         });
       }
-		} else {this.trial_clock.go();}
+		}
+		//do another practice trial...
+		else {
+			this.trial_clock.go();
+		}
 
-	}
+	};
 
 }

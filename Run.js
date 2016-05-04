@@ -18,6 +18,7 @@ Game.Run = function (game) {
     this.particles //  the particle manager (Phaser.Particles)
     this.physics   //  the physics manager (Phaser.Physics)
     this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
+    this.signal = new Phaser.Signal();
 
   };
 
@@ -26,48 +27,37 @@ Game.Run.prototype = {
     create: function() {
       //set up the timing
       this.game.time.advancedTiming = true;
-      fps = this.game.time.desiredFps;
-      durations = [0.5 * fps, 0.75 * fps, 1.5 * fps];
-      this.signal = new Phaser.Signal();
+      this.fps = this.game.time.desiredFps;
+
+      durations = [0.5 * this.fps, 0.75 * this.fps, 1.5 * this.fps];
       this.trial_clock = new TrialClock(durations,
                                         ['ISI', 'fixation', 'stimulus'],
                                         this.signal);
 
-      this.phase = 'search';
-
       var text_attrib = {font:'64px Arial', fill:'#FFFFFF', align:'center'};
 
-      this.ns = ['N1', 'N2'];
 
       //create the numbers
-      var n1 = this.game.add.button(this.game.world.centerX - 200,
-                                  this.game.world.centerY - 32, '', this.n1_down, this);
-      var n2 = this.game.add.button(this.game.world.centerX + 200,
-                                  this.game.world.centerY - 32, '', this.n2_down, this);
+      this.ns = ['N1', 'N2']; //just placeholder values
+      var n1 = text_button(this.game, this, this.n1_down,
+                      this.game.world.centerX - 200, this.game.world.centerY - 32,
+                      this.ns[0], text_attrib);
+      var n2 = text_button(this.game, this, this.n2_down,
+                      this.game.world.centerX + 200, this.game.world.centerY - 32,
+                      this.ns[1], text_attrib);
 
-      var n1_text = this.game.add.text(0,0, this.ns[0], text_attrib);
-      var n2_text = this.game.add.text(0,0, this.ns[1], text_attrib);
-
-      n1.addChild(n1_text);
-      n2.addChild(n2_text);
-
-      n1.anchor.set(0.5, 0.5);
-      n2.anchor.set(0.5, 0.5);
-
-      //these are buttons, but let's also set a key handler (F and J)
+      //buttons are clickable but let's also set a key handler (F and J)
       var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
       var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
-
-      //TODO - make these one-shots to avoid button mashing
-      F.onDown.add(this.n1_down, this);
+      F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
       J.onDown.add(this.n2_down, this);
-
 
       //create the fixation cross
       var cross = this.game.add.text(this.game.world.centerX,
                   this.game.world.centerY, '*', text_attrib);
       cross.anchor.set(0.5, 0.5);
 
+      //make everything invisible to start with
       n1.visible = false;
       n2.visible = false;
       cross.visible = false;
@@ -78,6 +68,7 @@ Game.Run.prototype = {
                   24,25]; //number size
       params[1] = [0.25, 0.33, 0.5, 0.66, 0.75, 0.75, 0.9, 0.9]; //ratio
 
+      //stimulus settings
       stimulus_attributes = {};
       stimulus_attributes['big_side'] = {'items': ['left', 'right'], 'repeats': 3};
       //attributes['con'] = ['con', 'incon', 3];
@@ -96,7 +87,7 @@ Game.Run.prototype = {
       this.generate();
       this.practice = new Practice(this.trial_clock,  this.difficulty, this.game);
 
-      //now bind the events
+      //EXPERIMENTAL LOGIC CONTROL
       this.trial_clock.signal.add(function () {
         if (arguments[0] == 'trial') {
           this.difficulty.adjust();
@@ -106,8 +97,8 @@ Game.Run.prototype = {
           }
         }
         else if (arguments[0] == 'stimulus') {
-          n1_text.setText(this.ns[0]);
-          n2_text.setText(this.ns[1]);
+          n1.children[0].setText(this.ns[0]); //TODO - make a proper extension of the button object
+          n2.children[0].setText(this.ns[1]);
           n1.visible = true;
           n2.visible = true;
           cross.visible = false;
@@ -128,15 +119,11 @@ Game.Run.prototype = {
         else if (arguments[0] == 'end_task') {
           this.trial_clock.stop();
           this.quitGame();
-          //put something here to let experiment factory know when to segue
         }
 
       }, this);
-
       this.trial_clock.go();
       this.trial_clock.next();
-
-
     },
 
     response: function (user_resp) {
@@ -146,6 +133,7 @@ Game.Run.prototype = {
       this.trial_clock.reset();
     },
 
+    //click and button handlers
     n1_down: function () {
       this.response('left');
     },
@@ -204,6 +192,7 @@ Game.Run.prototype = {
     },
 
     quitGame: function () {
+        //TODO - put something here to let experiment factory know when to segue?
         d = new Date()
         endTime = d.getTime()
 

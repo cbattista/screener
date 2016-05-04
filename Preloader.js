@@ -20,8 +20,8 @@ Game.Preloader.prototype = {
 		this.load.setPreloadSprite(this.preloadBar)
 
 		//	Here we load the rest of the assets our game needs.
-		this.game.load.image('correct', '/images/incorrect.png');
-		this.game.load.image('incorrect', '/images/correct.png');
+		this.game.load.image('correct', '/images/correct.png');
+		this.game.load.image('incorrect', '/images/incorrect.png');
 		this.game.load.image('hammy', '/images/hamster5000.png');
 
 	},

@@ -55,12 +55,22 @@ TrialClock = function (durations, event_names, signal) {
 	}
 
 	this.reset = function() {
+		//used to manually advance the trial
+		//such as when the user gives a response
 		this.frame=1;
 		this.count=0;
-		//trigger a trial event
+		//TODO - do we always want to trigger a trial event?
 		this.signal.dispatch('trial');
 		this.trial += 1;
 		this.next()
+	}
+
+	this.restart = function () {
+		//return everything to start state
+		//but don't trigger any events
+		this.trial = 1;
+		this.frame = 1;
+		this.count = 0;
 	}
 
 }
