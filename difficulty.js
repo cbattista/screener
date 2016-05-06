@@ -1,9 +1,10 @@
 //EXPERIMENT FUNCTIONS
-Grader = function(streak_length, max_value){
+Grader = function(parent, streak_length, max_value){
 	this.max_value = max_value;
   this.Es = [];
   this.signal = new Phaser.Signal();
 	this.streak_length= streak_length;
+	this.parent = parent;
 
   this.grade = function(user_resp, CRESP, RT) {
     if (user_resp == CRESP) {
@@ -12,7 +13,14 @@ Grader = function(streak_length, max_value){
     else {ACC = 0}
 
 		this.ACC = ACC;
-    this.easyness = ACC - (RT / this.max_value);
+
+		//check for timeout
+		if (RT != "NA") {
+    	this.easyness = ACC - (RT / this.max_value);
+		}
+		else {
+			this.easyness = -1;
+		}
     this.Es.push(this.easyness);
     l = this.Es.length;
     streak_sum = 0;
@@ -20,7 +28,19 @@ Grader = function(streak_length, max_value){
       streak_sum += this.Es[l - i];
     }
     this.streak = streak_sum / this.streak_length;
-    this.signal.dispatch("grade");
+
+		//log ye relevant data
+		this.parent.logger.inputData('CRESP', CRESP);
+		this.parent.logger.inputData('user_resp', user_resp);
+		this.parent.logger.inputData('ACC', ACC);
+		this.parent.logger.inputData('RT', RT);
+		this.parent.logger.inputData('easyness', this.easyness);
+		this.parent.logger.inputData('avg_easyness', this.streak);
+		this.parent.logger.inputData('practice', this.parent.practice.practice);
+		//log this trial's worth of data
+		this.parent.logger.sendData(this.parent.trial_clock.trial);
+    this.signal.dispatch("grade");  //TODO - do we even use this anymore?
+
     debug = RT + " " + ACC + " " + this.easyness + " " + this.streak;
     //console.log(debug);
   }
@@ -311,21 +331,25 @@ Param_Space = function(params, signal) {
 	}
 };
 
-Difficulty = function(params, grader, search_params, signal) {
-  this.param_space = new Param_Space(params, signal);
-	this.grader = grader;
+Difficulty = function(parent, params, search_params) {
+  this.param_space = new Param_Space(params, parent.signal);
 	this.search_params = search_params;
+	this.parent = parent;
   this.adjust = function(){
-    easyness = this.grader.easyness;
+    easyness = this.parent.grader.easyness;
+		//easier to assume we are not stuck, can overwrite later
+		this.parent.logger.inputData('stuck', false);
 
     //if we have already found the sticking point
     if (this.param_space.stuck == true) {
       this.param_space.search();
+			this.parent.logger.inputData('stuck', true);
     }
     else {
       //sticking point?
-      if (this.grader.streak < 0) {
+      if (this.parent.grader.streak < 0) {
         this.param_space.sticking_point();
+				this.parent.logger.inputData('stuck', true);
       }
 
       //otherwise

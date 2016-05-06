@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <title>Screener-to-phaser Port</title>
         <script src="phaser.min.js"></script>
+        <script src="logger.js"></script>
         <script src="styles.js"></script>
         <script src="stimuli.js"></script>
         <script src="clock.js"></script>
@@ -12,7 +13,6 @@
         <script src="randomizer.js"></script>
         <script src="Boot.js"></script>
         <script src="Preloader.js"></script>
-        <script src="Menu.js"></script>
         <script src="Instructions.js"></script>
         <script src="Run.js"></script>
 
@@ -27,9 +27,8 @@
 
     	game.state.add('Boot', Game.Boot)
     	game.state.add('Preloader', Game.Preloader)
-    	game.state.add('Menu', Game.Menu)
-    	game.state.add('Run', Game.Run)
       game.state.add('Instructions', Game.Instructions)
+    	game.state.add('Run', Game.Run)
 
     	//	Now start the Boot state.
     	game.state.start('Boot')

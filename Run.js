@@ -19,6 +19,7 @@ Game.Run = function (game) {
     this.physics   //  the physics manager (Phaser.Physics)
     this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
     this.signal = new Phaser.Signal();
+    this.logger = new Logger();
 
   };
 
@@ -31,9 +32,8 @@ Game.Run.prototype = {
 
       //MAKE THE TRIAL CLOCK
       durations = [0.5 * this.fps, 0.75 * this.fps, 1.5 * this.fps];
-      this.trial_clock = new TrialClock(durations,
-                                        ['ISI', 'fixation', 'stimulus'],
-                                        this.signal);
+      this.trial_clock = new TrialClock(this, durations,
+                                        ['ISI', 'fixation', 'stimulus']);
 
       //MAKE THE STIMULI
       var text_attrib = {font:'64px Arial', fill:'#FFFFFF', align:'center'};
@@ -60,19 +60,23 @@ Game.Run.prototype = {
       F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
       J.onDown.add(this.n2_down, this);
 
+      //trust me you will want these for debugging
+      var pause = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
+      pause.onDown.add(function () {this.game.pause = true; alert('pause');}, this);
+
       //CREATE ADAPTIVE DIFFICULTY MANAGER
       params = [];
       params[0] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
                   24,25]; //number size
       params[1] = [0.25, 0.33, 0.5, 0.66, 0.75, 0.75, 0.9, 0.9]; //ratio
       //how to scale the difficulty
-      search_params = [ [-1, -1], //if incorrect
+      search_params = [[-1, -1], //if incorrect
                         [0.5, [2, 2]], //if easyness > 0.5
                         [0.25, [1, 1]], //if easyness > .25
                         [0.1, [1,-1]] //....
                       ];
-      this.grader = new Grader(5, 1.5 * 1000);
-      this.difficulty = new Difficulty(params, this.grader, search_params, this.signal);
+      this.grader = new Grader(this, 5, 1.5 * 1000);
+      this.difficulty = new Difficulty(this, params, search_params);
 
       //CREATE STIMULUS ATTRIBUTE RANDOMIZER
       stimulus_attributes = {};
@@ -81,16 +85,20 @@ Game.Run.prototype = {
       this.stimulus = new Randomizer(stimulus_attributes);
 
       //CREATE PRACTICE MANAGER
-      this.practice = new Practice(this.trial_clock,  this.difficulty, this.game);
+      this.practice = new Practice(this);
 
       //EXPERIMENTAL LOGIC CONTROL
-      this.trial_clock.signal.add(function () {
+      this.signal.add(function () {
         if (arguments[0] == 'trial') {
           this.difficulty.adjust();
-          this.generate();
           if (this.practice.practice == true) {
             this.practice.check();
           }
+          this.generate();
+        }
+        else if (arguments[0] == 'timeout') {
+          //log the missing response
+          this.grader.grade('NA', this.CRESP, 'NA');
         }
         else if (arguments[0] == 'stimulus') {
           n1.children[0].setText(this.ns[0]); //TODO - make a proper extension of the button object
@@ -176,6 +184,10 @@ Game.Run.prototype = {
         else {
           this.ns = [n2, n1];
         }
+
+        this.logger.inputData('n1', n1);
+        this.logger.inputData('n2', n2);
+
     },
 
     is_touch_device: function() {
@@ -189,6 +201,7 @@ Game.Run.prototype = {
         d = new Date()
         endTime = d.getTime()
 
+        this.logger.downloadData();
         //Let them know it's done...
         this.game.time.events.add(Phaser.Timer.SECOND * 1.5, function () {
           endText = this.game.add.text(480, 100, 'All done!',
