@@ -31,7 +31,7 @@ Game.Run.prototype = {
       this.fps = this.game.time.desiredFps;
 
       //MAKE THE TRIAL CLOCK
-      durations = [0.5 * this.fps, 0.75 * this.fps, 1.5 * this.fps];
+      durations = [0.5 * this.fps, 0.75 * this.fps, .75 * this.fps];
       this.trial_clock = new TrialClock(this, durations,
                                         ['ISI', 'fixation', 'stimulus']);
 
@@ -65,6 +65,7 @@ Game.Run.prototype = {
       pause.onDown.add(function () {this.game.pause = true; alert('pause');}, this);
 
       //CREATE ADAPTIVE DIFFICULTY MANAGER
+      names = ['number_size', 'ratio'];
       params = [];
       params[0] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
                   24,25]; //number size
@@ -76,7 +77,7 @@ Game.Run.prototype = {
                         [0.1, [1,-1]] //....
                       ];
       this.grader = new Grader(this, 5, 1.5 * 1000);
-      this.difficulty = new Difficulty(this, params, search_params);
+      this.difficulty = new Difficulty(this, params, names, search_params);
 
       //CREATE STIMULUS ATTRIBUTE RANDOMIZER
       stimulus_attributes = {};
@@ -201,10 +202,11 @@ Game.Run.prototype = {
         d = new Date()
         endTime = d.getTime()
 
-        this.logger.downloadData();
+        //this.logger.downloadData();
         //Let them know it's done...
         this.game.time.events.add(Phaser.Timer.SECOND * 1.5, function () {
-          endText = this.game.add.text(480, 100, 'All done!',
+          t = "All done! Your score is " + this.difficulty.param_space.score;
+          endText = this.game.add.text(480, 100, t,
                                         {'font': '70px Arial', 'fill':'#fff'});
           endText.anchor.x = 0.5
         }, this);

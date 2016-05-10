@@ -46,9 +46,12 @@ Grader = function(parent, streak_length, max_value){
   }
 };
 
-Param_Space = function(params, signal) {
+Param_Space = function(params, names, signal, logger) {
 	this.params = params;
+	this.names = names;
 	this.stuck = false;
+	this.score = 0;
+	this.logger = logger;
 	//initialize indexes
 	this.indexes = [];
 	items = [];
@@ -120,6 +123,7 @@ Param_Space = function(params, signal) {
 		//ensure that the indexes have not passed into illegal values
 		maxed_sum = 0;
 
+
 		for (var i=0; i<this.params.length; i++) {
 			//hold at max if too high
 			if (this.indexes[i] > this.params[i].length - 1) {
@@ -131,6 +135,11 @@ Param_Space = function(params, signal) {
 			if (this.indexes[i] < 0) {
 				this.indexes[i] = 0;
 			}
+
+			ni = this.normed_indexes();
+			//TODO log the normed index
+			label = "diff" + (i + 1);
+			this.logger.inputData(label, ni[i]);
 		}
 
 		//if all params are maxed, call this the sticking point
@@ -150,14 +159,20 @@ Param_Space = function(params, signal) {
 	this.sticking_point = function() {
 		this.stuck = true;
 
+
 		this.new_xs = [];
 		this.new_ys = [];
 		this.new_zs = [];
 
+		ni = this.normed_indexes();
 		if (this.indexes.length == 2) {
+			//save the person's score
+			this.score = (ni[0] + ni[1]) / 2;
 			this.make_square();
 		}
 		else if (this.indexes.length == 3) {
+			//save the person's score
+			this.score = (ni[0] + ni[1] + ni[2]) / 3;
 			this.make_cube();
 		}
 		else {
@@ -321,7 +336,9 @@ Param_Space = function(params, signal) {
 
 	this.get = function (p) {
 		index = this.indexes[p];
-		return this.params[p][Math.round(index)];
+		value = this.params[p][Math.round(index)];
+		this.logger.inputData(this.names[p], value);
+		return value;
 	}
 
 	this.reset = function () {
@@ -331,8 +348,8 @@ Param_Space = function(params, signal) {
 	}
 };
 
-Difficulty = function(parent, params, search_params) {
-  this.param_space = new Param_Space(params, parent.signal);
+Difficulty = function(parent, params, names, search_params) {
+  this.param_space = new Param_Space(params, names, parent.signal, parent.logger);
 	this.search_params = search_params;
 	this.parent = parent;
   this.adjust = function(){
