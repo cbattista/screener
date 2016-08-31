@@ -109,6 +109,7 @@ Game.Run.prototype = {
 					this.grader.grade('NA', this.CRESP, 'NA');
 				}
 				else if (arguments[0] == 'stimulus') {
+
 					var ivc = this.stimulus.next('i_or_c');
 					var example = this.stimulus.next('example');
 					c1 = this.ns[0] + ivc + example;
@@ -123,16 +124,30 @@ Game.Run.prototype = {
 					//starting RT
 					d = new Date();
 					this.start = d.getTime();
+									
+
 				}
 				else if (arguments[0] == 'fixation') {
 					n1.visible = false;
 					n2.visible = false;
 					cross.visible = true;
+
+
 				}
 				else if (arguments[0] == 'ISI') {
 					n1.visible = false;
 					n2.visible = false;
 					cross.visible = false;
+
+					/*
+					// clear the screen (of circles that is)
+					n1.destroy();
+					n2.destroy();
+					// reinitiate graphics 
+					n1 = this.game.add.graphics(5, 20);
+				  n2 = this.game.add.graphics(455, 20);
+				  */
+					
 				}
 				else if (arguments[0] == 'end_task') {
 					this.trial_clock.stop();
