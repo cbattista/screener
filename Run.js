@@ -139,15 +139,14 @@ Game.Run.prototype = {
 					n2.visible = false;
 					cross.visible = false;
 
-					/*
-					// clear the screen (of circles that is)
-					n1.destroy();
-					n2.destroy();
-					// reinitiate graphics 
-					n1 = this.game.add.graphics(5, 20);
-				  n2 = this.game.add.graphics(455, 20);
-				  */
-					
+					n1.beginFill(0x00000, 1);
+					n2.beginFill(0x00000, 1);
+					//n1.drawCircle(0,0,100000);
+					n1.drawRect(0,0,960,600);
+					n2.drawRect(0,0,960,600);
+
+
+
 				}
 				else if (arguments[0] == 'end_task') {
 					this.trial_clock.stop();
@@ -251,6 +250,7 @@ Game.Run.prototype = {
 
 		// draw circle function
 		genCircle: function(graphics, k){
+			graphics.beginFill(0xF80A6, 1);
 			console.log(k);
 			circles = c[k];
 			for (i=0;i<circles.length;i++){
