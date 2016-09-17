@@ -31,7 +31,7 @@ Game.Run.prototype = {
 			this.fps = this.game.time.desiredFps;
 
 			//MAKE THE TRIAL CLOCK
-			durations = [0.5 * this.fps, 0.75 * this.fps, .75 * this.fps];
+			durations = [0.5 * this.fps, 0.75 * this.fps, 2 * this.fps];
 			this.trial_clock = new TrialClock(this, durations,
 																				['ISI', 'fixation', 'stimulus']);
 
@@ -40,16 +40,26 @@ Game.Run.prototype = {
 			//create the numbers and fixation cross
 			this.ns = ['N1', 'N2']; //just placeholder values
 
-			// adds graphics to prep for circle 
-			var n1 = this.game.add.graphics(5, 20);
-			var n2 = this.game.add.graphics(455, 20);
-			// color of circle 
-			n1.beginFill(0xF80A6, 1);
-			n2.beginFill(0xF80A6, 1);
+			// adds graphics to prep for circle
+			var n1 = this.game.add.sprite(5, 20);
+			var n2 = this.game.add.sprite(455, 20);
 
+			n1.inputEnabled = true;
+			n2.inputEnabled = true;
+
+			n1.addChild(this.game.add.graphics(0, 0));
+			n2.addChild(this.game.add.graphics(0, 0));
+
+			n1.events.onInputDown.add(this.n1_down, this);
+			n2.events.onInputDown.add(this.n2_down, this);
+
+			// color of circle
+			n1.children[0].beginFill(0xF80A6, 1);
+			n2.children[0].beginFill(0xF80A6, 1);
 
 			var cross = this.game.add.text(this.game.world.centerX,
 									this.game.world.centerY, '*', text_attrib);
+
 			cross.anchor.set(0.5, 0.5);
 
 			//make everything invisible to start with
@@ -115,8 +125,8 @@ Game.Run.prototype = {
 					c1 = this.ns[0] + ivc + example;
 					c2 = this.ns[1] + ivc + example;
 
-					this.genCircle(n1, c1);
-					this.genCircle(n2, c2);
+					this.genCircle(n1.children[0], c1);
+					this.genCircle(n2.children[0], c2);
 
 					n1.visible = true;
 					n2.visible = true;
@@ -124,7 +134,7 @@ Game.Run.prototype = {
 					//starting RT
 					d = new Date();
 					this.start = d.getTime();
-									
+
 
 				}
 				else if (arguments[0] == 'fixation') {
@@ -139,11 +149,11 @@ Game.Run.prototype = {
 					n2.visible = false;
 					cross.visible = false;
 
-					n1.beginFill(0x00000, 1);
-					n2.beginFill(0x00000, 1);
+					n1.children[0].beginFill(0x00000, 1);
+					n2.children[0].beginFill(0x00000, 1);
 					//n1.drawCircle(0,0,100000);
-					n1.drawRect(0,0,960,600);
-					n2.drawRect(0,0,960,600);
+					n1.children[0].drawRect(0,0,960,600);
+					n2.children[0].drawRect(0,0,960,600);
 
 
 
