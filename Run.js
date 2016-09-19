@@ -20,8 +20,8 @@ Game.Run = function (game) {
 		this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
 		this.signal = new Phaser.Signal();
 		this.logger = new Logger();
-
-	};
+		this.mobile = window.mobileAndTabletcheck();
+}
 
 Game.Run.prototype = {
 
@@ -43,15 +43,8 @@ Game.Run.prototype = {
 			// adds graphics to prep for circle
 			var n1 = this.game.add.sprite(5, 20);
 			var n2 = this.game.add.sprite(455, 20);
-
-			n1.inputEnabled = true;
-			n2.inputEnabled = true;
-
 			n1.addChild(this.game.add.graphics(0, 0));
 			n2.addChild(this.game.add.graphics(0, 0));
-
-			n1.events.onInputDown.add(this.n1_down, this);
-			n2.events.onInputDown.add(this.n2_down, this);
 
 			// color of circle
 			n1.children[0].beginFill(0xF80A6, 1);
@@ -67,7 +60,13 @@ Game.Run.prototype = {
 			n2.visible = false;
 			cross.visible = false;
 
-			//MAKE THE BUTTON HANDLERS (F and J)
+			//TOUCH EVENT HANDLERS
+			n1.inputEnabled = true;
+			n2.inputEnabled = true;
+			n1.events.onInputDown.add(this.n1_down, this);
+			n2.events.onInputDown.add(this.n2_down, this);
+
+			//KB EVENT HANDLERS (F and J)
 			var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
 			var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
 			F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
@@ -102,6 +101,28 @@ Game.Run.prototype = {
 
 			//CREATE PRACTICE MANAGER
 			this.practice = new Practice(this);
+
+			//INSTRUCTIONS MANAGEMENT
+			this.instructions = true;
+
+			if (this.mobile == true) {
+				right_ans = 'press on the right'
+				left_ans = 'press on the left'
+			} else {
+				right_ans = 'press the J key.'
+				left_ans = 'press the F key.'
+			}
+
+			this.ins_text = ["Which has more?  If there's more dots on the left " + left_ans + " but if there's more dots on the right, " + right_ans + ".",
+											"Here, there's more dots on the right, so " + right_ans + ".",
+											"Here, there's more dots on the left, so " + left_ans + "."]
+
+			instructions = this.game.add.text(490, 50, this.ins_text[0], ins_style);
+	    instructions.anchor.x = 0.5;
+			instructions.wordWrap = true;
+			instructions.wordWrapWidth = window.innerWidth - 400;
+
+
 
 			//EXPERIMENTAL LOGIC CONTROL
 			this.signal.add(function () {
@@ -165,11 +186,15 @@ Game.Run.prototype = {
 
 			}, this);
 
+		},
+
+		begin: function () {
 			//START IT UP!
 			this.generate();
 			this.trial_clock.go();
 			this.trial_clock.next();
-		},
+		}
+
 
 		response: function (user_resp) {
 			d = new Date();
