@@ -109,20 +109,18 @@ Game.Run.prototype = {
 				right_ans = 'press on the right'
 				left_ans = 'press on the left'
 			} else {
-				right_ans = 'press the J key.'
-				left_ans = 'press the F key.'
+				right_ans = 'press the J key'
+				left_ans = 'press the F key'
 			}
 
-			this.ins_text = ["Which has more?  If there's more dots on the left " + left_ans + " but if there's more dots on the right, " + right_ans + ".",
+			ins_text = ["Which has more?  If there's more dots on the left " + left_ans + " but if there's more dots on the right, " + right_ans + ".",
 											"Here, there's more dots on the right, so " + right_ans + ".",
 											"Here, there's more dots on the left, so " + left_ans + "."]
 
-			instructions = this.game.add.text(490, 50, this.ins_text[0], ins_style);
-	    instructions.anchor.x = 0.5;
-			instructions.wordWrap = true;
-			instructions.wordWrapWidth = window.innerWidth - 400;
+			//stimuli to display during the instructions...
+			ins_params = [{'ns': [1, 3], 'CRESP': 'right'}, {'ns': [5, 2], 'CRESP': 'left'}];
 
-
+			this.instructions = new Instructions(ins_text, ins_params, this);
 
 			//EXPERIMENTAL LOGIC CONTROL
 			this.signal.add(function () {
@@ -132,13 +130,14 @@ Game.Run.prototype = {
 						this.practice.check();
 					}
 					this.generate();
-
-
 				}
+
 				else if (arguments[0] == 'timeout') {
 					//log the missing response
 					this.grader.grade('NA', this.CRESP, 'NA');
 				}
+
+				//Mandatory
 				else if (arguments[0] == 'stimulus') {
 
 					var ivc = this.stimulus.next('i_or_c');
@@ -155,33 +154,38 @@ Game.Run.prototype = {
 					//starting RT
 					d = new Date();
 					this.start = d.getTime();
-
-
 				}
+
 				else if (arguments[0] == 'fixation') {
 					n1.visible = false;
 					n2.visible = false;
 					cross.visible = true;
-
-
 				}
+				//Mandatory
 				else if (arguments[0] == 'ISI') {
 					n1.visible = false;
 					n2.visible = false;
 					cross.visible = false;
 
+					//draw rectangles over the dots
 					n1.children[0].beginFill(0x00000, 1);
 					n2.children[0].beginFill(0x00000, 1);
-					//n1.drawCircle(0,0,100000);
 					n1.children[0].drawRect(0,0,960,600);
 					n2.children[0].drawRect(0,0,960,600);
-
-
-
 				}
+
 				else if (arguments[0] == 'end_task') {
 					this.trial_clock.stop();
 					this.quitGame();
+				}
+
+				else if (arguments[0] == 'instructions') {
+					if (this.instructions.instructions == true) {
+						alert('hello');
+						this.instructions.next();
+					} else {
+						this.begin();
+					}
 				}
 
 			}, this);
@@ -193,8 +197,7 @@ Game.Run.prototype = {
 			this.generate();
 			this.trial_clock.go();
 			this.trial_clock.next();
-		}
-
+		},
 
 		response: function (user_resp) {
 			d = new Date();
@@ -286,7 +289,6 @@ Game.Run.prototype = {
 		// draw circle function
 		genCircle: function(graphics, k){
 			graphics.beginFill(0xF80A6, 1);
-			console.log(k);
 			circles = c[k];
 			for (i=0;i<circles.length;i++){
 				graphics.drawCircle( (circles[i][0]/2) , (circles[i][1]/2) , (circles[i][2]) );

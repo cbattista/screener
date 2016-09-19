@@ -1,26 +1,45 @@
-Game.Instructions = function (game) {
+//instructions.js
 
-	this.music = null
-	this.playButton = null
+Instructions = function (text, params, parent) {
+  this.text = text;
+  this.params = params;
+  this.count = 0;
+  this.parent = parent;
 
-}
+  if (this.mobile == true) {
+    cont = 'press here to continue'
+  } else {
+    cont = 'press space to continue'
+  }
 
-Game.Instructions.prototype = {
+  var continue_button = text_button(parent.game, parent, function () {parent.signal.dispatch('instructions');},
+                  parent.game.world.centerX, parent.game.world.centerY - 100,
+                  cont, ins_style);
 
-  create: function () {
+  this.ins_text = parent.game.add.text(parent.game.world.centerX, 50, text[0], ins_style);
+  this.ins_text.anchor.x = 0.5;
+  this.ins_text.wordWrap = true;
+  this.ins_text.wordWrapWidth = window.innerWidth - 400;
 
-    instructions = this.game.add.text(490, 50, 'In this experiment, you will see two sets of numbers side-by-side.  Your job is to decide which number is the biggest.  If the larger number is on the left, push the F key. If the larger number is on the right, push the J key.\n\n Place your hands so your left hand is over the F key and your right hand is over J key.  \n\nPress the SPACEBAR to try some practice.',
-																								ins_style);
-    instructions.anchor.x = 0.5;
-		instructions.wordWrap = true;
-		instructions.wordWrapWidth = window.innerWidth - 400;
-    //instructions.lineSpacing = -8
-    //this.go_button = this.add.button(450, 410, 'hammy', function () {this.state.start('Run');}, this);
-		//this.go_button.addChild(this.add.text(0, 0, 'Go!', {'font': '64px Arial', 'fill':'#AA0000'}));
+  this.next = function () {
+    //hide initial text
+    this.ins_text.visible = false;
 
-		space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
-		space.onDown.add(function () {this.state.start('Run');}, this);
+    //get the next stimulus params and set these properties
+    trial_params = this.params[0];
+    for (var k in trial_params) {
+      //set the values of the trial parameters
+      this.parent[k] = trial_params[k];
+    }
 
-  },
+    //clear the stimuli
+    this.parent.signal.dispatch('ISI');
+    //update the instructions label
+    this.ins_text.setText(this.text[this.count + 1]);
+    //show the stimuli
+    this.parent.signal.dispatch('stimulus');
+
+    this.count += 1;
+  }
 
 }
