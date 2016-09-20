@@ -102,24 +102,23 @@ Game.Run.prototype = {
 			//CREATE PRACTICE MANAGER
 			this.practice = new Practice(this);
 
-			//INSTRUCTIONS MANAGEMENT
-			this.instructions = true;
-
 			if (this.mobile == true) {
-				right_ans = 'press on the right'
-				left_ans = 'press on the left'
+				right_ans = 'touch the right side of the screen'
+				left_ans = 'touch the left side of the screen'
 			} else {
 				right_ans = 'press the J key'
 				left_ans = 'press the F key'
 			}
 
-			ins_text = ["Which has more?  If there's more dots on the left " + left_ans + " but if there's more dots on the right, " + right_ans + ".",
+			ins_text = ["Which has more?  If there's more dots on the left " + left_ans + ", but if there's more dots on the right, " + right_ans + ".",
 											"Here, there's more dots on the right, so " + right_ans + ".",
 											"Here, there's more dots on the left, so " + left_ans + "."]
 
 			//stimuli to display during the instructions...
-			ins_params = [{'ns': [1, 3], 'CRESP': 'right'}, {'ns': [5, 2], 'CRESP': 'left'}];
+			ins_params = [{'ns': [1, 3], 'CRESP': 'right'},
+										{'ns': [5, 2], 'CRESP': 'left'}];
 
+			//CREATE INSTRUCTIONS MANAGER
 			this.instructions = new Instructions(ins_text, ins_params, this);
 
 			//EXPERIMENTAL LOGIC CONTROL
@@ -180,11 +179,11 @@ Game.Run.prototype = {
 				}
 
 				else if (arguments[0] == 'instructions') {
-					if (this.instructions.instructions == true) {
-						alert('hello');
+					if (this.instructions.continue() == true) {
 						this.instructions.next();
 					} else {
-						this.begin();
+						alert('end of instructions');
+						//this.begin();
 					}
 				}
 
@@ -203,7 +202,17 @@ Game.Run.prototype = {
 			d = new Date();
 			RT = d.getTime() - this.start ;
 			this.grader.grade(user_resp, this.CRESP, RT);
-			this.trial_clock.reset();
+
+			console.log(this.instructions.instructions);
+			console.log(this.grader.ACC);
+
+			if (this.instructions.instructions == false) {
+				this.trial_clock.reset();
+			} else {
+					if (this.grader.ACC == 1) {
+						this.instructions.next();
+					}
+			}
 		},
 
 		//click and button handlers

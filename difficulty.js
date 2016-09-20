@@ -37,6 +37,7 @@ Grader = function(parent, streak_length, max_value){
 		this.parent.logger.inputData('easyness', this.easyness);
 		this.parent.logger.inputData('avg_easyness', this.streak);
 		this.parent.logger.inputData('practice', this.parent.practice.practice);
+		this.parent.logger.inputData('mobile', this.parent.mobile);
 		//log this trial's worth of data
 		this.parent.logger.sendData(this.parent.trial_clock.trial);
     this.signal.dispatch("grade");  //TODO - do we even use this anymore?
