@@ -23,14 +23,14 @@ Instructions = function (text, params, parent) {
   ins_style['backgroundColor'] = 'rgba(25, 25, 25, 1)';
   ins_style['font'] = '24px Arial';
 
-  var continue_button = text_button(parent.game, parent, function () {parent.signal.dispatch('instructions');},
+  this.continue_button = text_button(parent.game, parent, function () {parent.signal.dispatch('instructions');},
                   parent.game.world.centerX, parent.game.world.centerY + 200,
                   cont, ins_style);
 
 
   this.next = function () {
     //hide initial text
-    continue_button.destroy();
+    this.continue_button.destroy();
 
     //get the next stimulus params and set these properties
     trial_params = this.params[this.count];
@@ -47,16 +47,25 @@ Instructions = function (text, params, parent) {
     this.parent.signal.dispatch('stimulus');
 
     this.count += 1;
+  };
+
+  this.incorrect = function () {
+    //fun little animation to show they got it wrong...
+    //this.parent.game.add.tween(this.continue_button).to({angle:45}, 2400, Phaser.Easing.Cubic.In, true);
+     //t = this.parent.game.add.tween(this.continue_button)
+     //t.to( { alpha: 0.1 }, 2000, "Linear", true);
+     //t.start();
+  };
 
   this.continue = function () {
       //check if we've completed the instructions
       if (this.params.length > this.count) {
         return true;
       } else {
+        //if we are done, we should destroy the instructions text
+        this.ins_text.destroy();
         return false;
       }
-    }
-
-  }
+    };
 
 }
