@@ -5,6 +5,7 @@ Instructions = function (text, params, parent) {
   this.params = params;
   this.count = 0;
   this.parent = parent;
+  this.complete = false;
 
   if (parent.mobile == true) {
     cont = 'press here to continue'

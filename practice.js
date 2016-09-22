@@ -23,6 +23,10 @@ Practice = function(parent) {
 	this.incorrect.anchor.y = 0.5;
 	this.incorrect.visible = false;
 
+	this.begin = function() {
+		//show the first practice instructions screen
+	}
+
 	//check accuracy of individual trial and give feedback
 	this.check = function() {
 		//we do this to suppress the easyness streak calculation

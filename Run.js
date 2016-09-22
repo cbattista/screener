@@ -194,11 +194,19 @@ Game.Run.prototype = {
 			RT = d.getTime() - this.start ;
 			this.grader.grade(user_resp, this.CRESP, RT);
 
-			//handle the appropriate behavior when in instructions mode
-			if (this.instructions.continue() == false) {
+			if (this.instructions.complete == true) {
 				this.trial_clock.reset();
-			} else {
-				this.instructions.check();
+			}
+			else {
+				//handle the appropriate behavior when in instructions mode
+				if (this.instructions.continue() == false) {
+					//mark the instructions as complete
+					this.instructions.complete = true;
+					//now, fire up practice...
+					this.practice.begin();
+				} else {
+					this.instructions.check();
+				}
 			}
 		},
 
