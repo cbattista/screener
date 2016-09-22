@@ -6,7 +6,7 @@ Practice = function(parent) {
 	this.parent = parent;
 
 	instructions = {};
-	instructions['practice'] = "Let's try some practice.\n\nPress SPACEBAR to practice."
+	instructions['practice'] = "Great job!  Let's try some practice.\n\nPress SPACEBAR to practice."
 	instructions['practice_again'] = "Let's try a little more practice.\n\nPress SPACEBAR to practice some more."
 	instructions['practice_success'] = "Great job!  Now let's play for real!\n\nPress SPACEBAR to continue."
 	instructions['practice_fail'] = "Looks like you're having trouble, and that's no fun.\n\nPress SPACEBAR to move on to the next experiment."

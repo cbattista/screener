@@ -5,7 +5,6 @@ Instructions = function (text, params, parent) {
   this.params = params;
   this.count = 0;
   this.parent = parent;
-  this.instructions = true;
 
   if (parent.mobile == true) {
     cont = 'press here to continue'
@@ -23,10 +22,9 @@ Instructions = function (text, params, parent) {
   ins_style['backgroundColor'] = 'rgba(25, 25, 25, 1)';
   ins_style['font'] = '24px Arial';
 
-  this.continue_button = text_button(parent.game, parent, function () {parent.signal.dispatch('instructions');},
+  this.continue_button = text_button(parent.game, this, function () {this.next();},
                   parent.game.world.centerX, parent.game.world.centerY + 200,
                   cont, ins_style);
-
 
   this.next = function () {
     //hide initial text
@@ -47,6 +45,22 @@ Instructions = function (text, params, parent) {
     this.parent.signal.dispatch('stimulus');
 
     this.count += 1;
+  };
+
+  this.check = function () {
+
+    if (this.parent.grader.ACC == 1) {
+      if (this.continue() == true) {
+        this.next();
+      }
+      else {
+        this.parent.begin();
+      }
+    } else {
+      //TODO make the instruction text wiggle
+      this.incorrect();
+    }
+
   };
 
   this.incorrect = function () {

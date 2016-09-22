@@ -124,6 +124,8 @@ Game.Run.prototype = {
 			//EXPERIMENTAL LOGIC CONTROL
 			this.signal.add(function () {
 				if (arguments[0] == 'trial') {
+					console.log('trial');
+					console.log('practice');
 					this.difficulty.adjust();
 					if (this.practice.practice == true) {
 						this.practice.check();
@@ -178,15 +180,6 @@ Game.Run.prototype = {
 					this.quitGame();
 				}
 
-				else if (arguments[0] == 'instructions') {
-					if (this.instructions.continue()) {
-						this.instructions.next();
-					} else {
-						alert('end of instructions');
-						//this.begin();
-					}
-				}
-
 			}, this);
 
 		},
@@ -203,20 +196,11 @@ Game.Run.prototype = {
 			RT = d.getTime() - this.start ;
 			this.grader.grade(user_resp, this.CRESP, RT);
 
-			if (this.instructions.instructions == false) {
+			//handle the appropriate behavior when in instructions mode
+			if (this.instructions.continue() == false) {
 				this.trial_clock.reset();
 			} else {
-					if (this.grader.ACC == 1) {
-						if (this.instructions.continue() == true) {
-							this.instructions.next();
-						}
-						else {
-							this.begin();
-						}
-					} else {
-						//make the instruction text wiggle
-						this.instructions.incorrect();
-					}
+				this.instructions.check();
 			}
 		},
 
