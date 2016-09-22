@@ -124,8 +124,6 @@ Game.Run.prototype = {
 			//EXPERIMENTAL LOGIC CONTROL
 			this.signal.add(function () {
 				if (arguments[0] == 'trial') {
-					console.log('trial');
-					console.log('practice');
 					this.difficulty.adjust();
 					if (this.practice.practice == true) {
 						this.practice.check();

@@ -48,13 +48,15 @@ Instructions = function (text, params, parent) {
   };
 
   this.check = function () {
-
     if (this.parent.grader.ACC == 1) {
       if (this.continue() == true) {
         this.next();
       }
       else {
-        this.parent.begin();
+        //show some text to the user and
+
+
+        //this.parent.begin();
       }
     } else {
       //TODO make the instruction text wiggle
@@ -78,6 +80,7 @@ Instructions = function (text, params, parent) {
       } else {
         //if we are done, we should destroy the instructions text
         this.ins_text.destroy();
+
         return false;
       }
     };
