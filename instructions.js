@@ -53,17 +53,36 @@ Instructions = function (text, params, parent) {
   };
 
   this.check = function () {
-    if (this.parent.grader.ACC == 1) {
-      console.log('ins: correct!');
-      if (this.continue() == true) {
-        this.next();
-      }
-    } else {
-      //TODO make the instruction text wiggle
-      console.log('ins: incorrect!');
-      this.incorrect();
-    }
+    //don't sum up the easyness
+    this.parent.avg_easyness = undefined;
 
+    //handle the appropriate behavior when in instructions mode
+    if (this.continue() == false) {
+      //mark the instructions as complete
+      this.complete = true;
+      if (this.parent.grader.ACC == 1) {
+        //remove practice text
+        this.ins_text.destroy();
+
+        //clear ye stimuli
+        this.ins_text.destroy();
+        this.parent.signal.dispatch('ISI');
+        //now, fire up practice...
+        this.parent.practice.begin();
+      } else { this.complete = false;}
+
+    } else {
+      if (this.parent.grader.ACC == 1) {
+        console.log('ins: correct!');
+        if (this.continue() == true) {
+          this.next();
+        }
+      } else {
+        //TODO make the instruction text wiggle
+        console.log('ins: incorrect!');
+        this.incorrect();
+      }
+    }
   };
 
   this.incorrect = function () {
@@ -79,9 +98,6 @@ Instructions = function (text, params, parent) {
       if (this.params.length > this.count) {
         return true;
       } else {
-        //if we are done, we should destroy the instructions text
-        this.ins_text.destroy();
-
         return false;
       }
     };

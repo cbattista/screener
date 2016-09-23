@@ -47,12 +47,13 @@ Grader = function(parent, streak_length, max_value){
   }
 };
 
-Param_Space = function(params, names, signal, logger) {
+Param_Space = function(params, names, signal, logger, grader) {
 	this.params = params;
 	this.names = names;
 	this.stuck = false;
 	this.score = 0;
 	this.logger = logger;
+	this.grader = grader;
 	//initialize indexes
 	this.indexes = [];
 	items = [];
@@ -343,6 +344,7 @@ Param_Space = function(params, names, signal, logger) {
 	}
 
 	this.reset = function () {
+		this.grader.Es = [];
 		for (var i=0; i<this.params.length; i++) {
 			this.indexes[i] = 0;
 		}
@@ -350,7 +352,7 @@ Param_Space = function(params, names, signal, logger) {
 };
 
 Difficulty = function(parent, params, names, search_params) {
-  this.param_space = new Param_Space(params, names, parent.signal, parent.logger);
+  this.param_space = new Param_Space(params, names, parent.signal, parent.logger, parent.grader);
 	this.search_params = search_params;
 	this.parent = parent;
   this.adjust = function(){

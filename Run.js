@@ -184,6 +184,7 @@ Game.Run.prototype = {
 
 		begin: function () {
 			//START IT UP!
+			this.difficulty.param_space.reset();
 			this.generate();
 			this.trial_clock.go();
 			this.trial_clock.next();
@@ -198,20 +199,7 @@ Game.Run.prototype = {
 				this.trial_clock.reset();
 			}
 			else {
-				//handle the appropriate behavior when in instructions mode
-				if (this.instructions.continue() == false) {
-					//mark the instructions as complete
-					this.instructions.complete = true;
-					if (this.grader.ACC == 1) {
-						//clear ye stimuli
-						this.signal.dispatch('ISI');
-						//now, fire up practice...
-						this.practice.begin();
-					} else { this.instructions.complete = false;}
-
-				} else {
-					this.instructions.check();
-				}
+				this.instructions.check();
 			}
 		},
 
