@@ -202,8 +202,13 @@ Game.Run.prototype = {
 				if (this.instructions.continue() == false) {
 					//mark the instructions as complete
 					this.instructions.complete = true;
-					//now, fire up practice...
-					this.practice.begin();
+					if (this.grader.ACC == 1) {
+						//clear ye stimuli
+						this.signal.dispatch('ISI');
+						//now, fire up practice...
+						this.practice.begin();
+					} else { this.instructions.complete = false;}
+
 				} else {
 					this.instructions.check();
 				}
@@ -275,8 +280,7 @@ Game.Run.prototype = {
 				//Let them know it's done...
 				this.game.time.events.add(Phaser.Timer.SECOND * 1.5, function () {
 					t = "All done! Your score is " + this.difficulty.param_space.score;
-					endText = this.game.add.text(480, 100, t,
-																				{'font': '70px Arial', 'fill':'#fff'});
+					endText = this.game.add.text(480, 100, t, ins_style);
 					endText.anchor.x = 0.5
 				}, this);
 		},

@@ -27,6 +27,9 @@ Instructions = function (text, params, parent) {
                   parent.game.world.centerX, parent.game.world.centerY + 200,
                   cont, ins_style);
 
+  this.space = this.parent.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+	this.space.onDown.addOnce(function() {this.next();}, this);
+
   this.next = function () {
     //hide initial text
     this.continue_button.destroy();
@@ -46,21 +49,18 @@ Instructions = function (text, params, parent) {
     this.parent.signal.dispatch('stimulus');
 
     this.count += 1;
+    this.space.onDown.removeAll();
   };
 
   this.check = function () {
     if (this.parent.grader.ACC == 1) {
+      console.log('ins: correct!');
       if (this.continue() == true) {
         this.next();
       }
-      else {
-        //show some text to the user and
-
-
-        //this.parent.begin();
-      }
     } else {
       //TODO make the instruction text wiggle
+      console.log('ins: incorrect!');
       this.incorrect();
     }
 

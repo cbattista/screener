@@ -5,11 +5,17 @@ Practice = function(parent) {
 	this.attempts = 0;
 	this.parent = parent;
 
+	if (parent.mobile == true) {
+		this.cont = 'press here to continue'
+	} else {
+		this.cont = 'press space to continue'
+	}
+
 	instructions = {};
-	instructions['practice'] = "Great job!  Let's try some practice.\n\nPress SPACEBAR to practice."
-	instructions['practice_again'] = "Let's try a little more practice.\n\nPress SPACEBAR to practice some more."
-	instructions['practice_success'] = "Great job!  Now let's play for real!\n\nPress SPACEBAR to continue."
-	instructions['practice_fail'] = "Looks like you're having trouble, and that's no fun.\n\nPress SPACEBAR to move on to the next experiment."
+	instructions['practice'] = "Great job!  Let's try some practice.  Things will go a little faster now..."
+	instructions['practice_again'] = "Let's try a little more practice."
+	instructions['practice_success'] = "Great job!  Now let's play for real!"
+	instructions['practice_fail'] = "Looks like you're having trouble, and that's no fun."
 
 	this.instructions = instructions;
 
@@ -25,7 +31,27 @@ Practice = function(parent) {
 
 	this.begin = function() {
 		//show the first practice instructions screen
-	}
+		this.prac_text = this.parent.game.add.text(this.parent.game.world.centerX,
+										this.parent.game.world.centerY-300, this.instructions['practice'], ins_style);
+
+		this.prac_text.anchor.x = 0.5;
+
+		this.continue_button = text_button(this.parent.game, this, this.on_continue,
+														this.parent.game.world.centerX, this.parent.game.world.centerY,
+														this.cont, ins_style)
+
+		space = this.parent.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+
+		space.onDown.add(this.on_continue, this);
+
+	};
+
+	this.on_continue = function () {
+		console.log(this);
+		this.prac_text.destroy();
+		this.continue_button.destroy();
+		this.parent.begin();
+	};
 
 	//check accuracy of individual trial and give feedback
 	this.check = function() {
@@ -90,7 +116,7 @@ Practice = function(parent) {
 				}
 			}
 			this.prac_text = this.parent.game.add.text(this.parent.game.world.centerX,
-																								 this.parent.game.world.centerY,
+																								 this.parent.game.world.centerY - 300,
 																								 text, ins_style);
 			this.prac_text.anchor.x=0.5;
 			this.prac_text.anchor.y=0.5;
@@ -100,24 +126,36 @@ Practice = function(parent) {
 			space = this.parent.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
     	if (p_fail == false) {
-				space.onDown.add(function () {
-					this.prac_text.kill();
-					this.parent.trial_clock.restart();
-				}, this);
+				space.onDown.addOnce(this.pass_function, this);
+				this.continue_button = text_button(this.parent.game, this, this.fail_function,
+																this.parent.game.world.centerX, this.parent.game.world.centerY,
+																this.cont, ins_style)
 
 			} else {
-				space.onDown.add(function(e) {
-          if (e.key == Crafty.keys.SPACE) {
-						this.prac_text.kill();
-						this.parent.trial_clock.signal.dispatch('end_task');
-          }
-        });
+				space.onDown.addOnce(this.fail_function, this.parent);
+				this.continue_button = text_button(this.parent.game, this.parent, this.pass_function,
+																this.parent.game.world.centerX, this.parent.game.world.centerY,
+																this.cont, ins_style)
+
       }
 		}
 		//do another practice trial...
 		else {
 			this.parent.trial_clock.go();
 		}
+
+	};
+
+	this.pass_function = function () {
+		this.prac_text.kill();
+		this.continue_button.kill();
+		this.parent.trial_clock.restart();
+	};
+
+	this.fail_function = function () {
+			this.prac_text.kill();
+			this.continue_button.kill();
+			this.parent.trial_clock.signal.dispatch('end_task');
 
 	};
 
