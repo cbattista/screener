@@ -100,6 +100,7 @@ Practice = function(parent) {
 				this.practice = false;
 				//reset acc, RT, and EZ list
 				text = this.instructions['practice_success'];
+				p_fail = false;
 			}
 			else {
 				this.attempts += 1;
@@ -115,6 +116,7 @@ Practice = function(parent) {
 					text = this.instructions['practice_again'];
 				}
 			}
+
 			this.prac_text = this.parent.game.add.text(this.parent.game.world.centerX,
 																								 this.parent.game.world.centerY - 300,
 																								 text, ins_style);
@@ -127,13 +129,13 @@ Practice = function(parent) {
 
     	if (p_fail == false) {
 				space.onDown.addOnce(this.pass_function, this);
-				this.continue_button = text_button(this.parent.game, this, this.fail_function,
+				this.continue_button = text_button(this.parent.game, this, this.pass_function,
 																this.parent.game.world.centerX, this.parent.game.world.centerY,
 																this.cont, ins_style)
 
 			} else {
 				space.onDown.addOnce(this.fail_function, this.parent);
-				this.continue_button = text_button(this.parent.game, this.parent, this.pass_function,
+				this.continue_button = text_button(this.parent.game, this.parent, this.fail_function,
 																this.parent.game.world.centerX, this.parent.game.world.centerY,
 																this.cont, ins_style)
 
@@ -155,7 +157,7 @@ Practice = function(parent) {
 	this.fail_function = function () {
 			this.prac_text.kill();
 			this.continue_button.kill();
-			this.parent.trial_clock.signal.dispatch('end_task');
+			this.parent.signal.dispatch('end_task');
 
 	};
 

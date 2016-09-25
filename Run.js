@@ -280,6 +280,8 @@ Game.Run.prototype = {
 		render: function () {
 			//this will display the frame rate (should be 60...ish)
 			this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
+			this.game.debug.text('trial: ' + this.trial_clock.trial, 2, 14, '#00ff00');
+
 		},
 
 		// draw circle function
