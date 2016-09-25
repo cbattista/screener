@@ -69,7 +69,10 @@ Instructions = function (text, params, parent) {
         this.parent.signal.dispatch('ISI');
         //now, fire up practice...
         this.parent.practice.begin();
-      } else { this.complete = false;}
+      } else {
+        this.complete = false;
+        this.incorrect();
+      }
 
     } else {
       if (this.parent.grader.ACC == 1) {
@@ -87,10 +90,17 @@ Instructions = function (text, params, parent) {
 
   this.incorrect = function () {
     //fun little animation to show they got it wrong...
-    //this.parent.game.add.tween(this.continue_button).to({angle:45}, 2400, Phaser.Easing.Cubic.In, true);
-     //t = this.parent.game.add.tween(this.continue_button)
-     //t.to( { alpha: 0.1 }, 2000, "Linear", true);
+    //this.parent.game.add.tween(this.ins_text).to({angle:2}, 100, Phaser.Easing.Cubic.InOut, true);
+
+
+
+    t = this.parent.game.add.tween(this.ins_text);
+    t.to({ x: this.ins_text.position.x + 5, angle:this.ins_text.angle + 5}, 150, function (k) {
+                    return wiggle(k, .5, .5);
+                  }, true, 0, 2);
+
      //t.start();
+
   };
 
   this.continue = function () {
@@ -102,4 +112,11 @@ Instructions = function (text, params, parent) {
       }
     };
 
+}
+
+function wiggle(aProgress, aPeriod1, aPeriod2) {
+    var current1 = aProgress * Math.PI * 2 * aPeriod1;
+    var current2 = aProgress * (Math.PI * 2 * aPeriod2 + Math.PI / 2);
+
+    return Math.sin(current1) * Math.cos(current2);
 }
