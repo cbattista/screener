@@ -18,7 +18,7 @@ Instructions = function (text, params, parent) {
   this.ins_text = parent.game.add.text(parent.game.world.centerX, 50, text[0], ins_style);
   this.ins_text.anchor.x = 0.5;
   this.ins_text.wordWrap = true;
-  this.ins_text.wordWrapWidth = window.innerWidth - 400;
+  this.ins_text.wordWrapWidth = 800;
 
   ins_style['backgroundColor'] = 'rgba(25, 25, 25, 1)';
   ins_style['font'] = '24px Arial';
