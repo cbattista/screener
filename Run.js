@@ -40,9 +40,17 @@ Game.Run.prototype = {
 			//create the numbers and fixation cross
 			this.ns = ['N1', 'N2']; //just placeholder values
 
+			//calculate where to add graphics
+			x = this.game.world.bounds.width;
+			y = this.game.world.bounds.height;
+
+			dot_width = 700;
+
+			x_offs = (x - 700) / 4;
+			y_offs = (y - 600) / 2;
 			// adds graphics to prep for circle
-			var n1 = this.game.add.sprite(5, 20);
-			var n2 = this.game.add.sprite(455, 20);
+			var n1 = this.game.add.sprite(x_offs, y_offs);
+			var n2 = this.game.add.sprite(this.game.world.centerX + x_offs, y_offs);
 			n1.addChild(this.game.add.graphics(0, 0));
 			n2.addChild(this.game.add.graphics(0, 0));
 
@@ -169,8 +177,8 @@ Game.Run.prototype = {
 					//draw rectangles over the dots
 					n1.children[0].beginFill(0x00000, 1);
 					n2.children[0].beginFill(0x00000, 1);
-					n1.children[0].drawRect(0,0,960,600);
-					n2.children[0].drawRect(0,0,960,600);
+					n1.children[0].drawRect(0,0,350,600);
+					n2.children[0].drawRect(0,0,350,600);
 				}
 
 				else if (arguments[0] == 'end_task') {
@@ -286,6 +294,9 @@ Game.Run.prototype = {
 
 		// draw circle function
 		genCircle: function(graphics, k){
+			graphics.lineStyle(5, 0x222222, 1);
+			graphics.drawRect(0, 0, 350, 600);
+			graphics.lineStyle(0, 0x000000, 1);
 			graphics.beginFill(0xF80A6, 1);
 			circles = c[k];
 			for (i=0;i<circles.length;i++){
