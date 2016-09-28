@@ -96,7 +96,7 @@ Practice = function(parent) {
 			this.count = 0;
 			var p_fail = false;
 
-			if (p_acc > 0.5) {
+			if (p_acc > 0.8) {
 				this.practice = false;
 				//reset acc, RT, and EZ list
 				text = this.instructions['practice_success'];
