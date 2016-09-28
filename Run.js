@@ -20,8 +20,8 @@ Game.Run = function (game) {
 		this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
 		this.signal = new Phaser.Signal();
 		this.logger = new Logger();
-
-	};
+		this.mobile = window.mobileAndTabletcheck();
+}
 
 Game.Run.prototype = {
 
@@ -40,18 +40,19 @@ Game.Run.prototype = {
 			//create the numbers and fixation cross
 			this.ns = ['N1', 'N2']; //just placeholder values
 
+			//calculate where to add graphics
+			x = this.game.world.bounds.width;
+			y = this.game.world.bounds.height;
+
+			dot_width = 700;
+
+			x_offs = (x - 700) / 4;
+			y_offs = (y - 600) / 2;
 			// adds graphics to prep for circle
-			var n1 = this.game.add.sprite(5, 20);
-			var n2 = this.game.add.sprite(455, 20);
-
-			n1.inputEnabled = true;
-			n2.inputEnabled = true;
-
+			var n1 = this.game.add.sprite(x_offs, y_offs);
+			var n2 = this.game.add.sprite(this.game.world.centerX + x_offs, y_offs);
 			n1.addChild(this.game.add.graphics(0, 0));
 			n2.addChild(this.game.add.graphics(0, 0));
-
-			n1.events.onInputDown.add(this.n1_down, this);
-			n2.events.onInputDown.add(this.n2_down, this);
 
 			// color of circle
 			n1.children[0].beginFill(0xF80A6, 1);
@@ -67,7 +68,13 @@ Game.Run.prototype = {
 			n2.visible = false;
 			cross.visible = false;
 
-			//MAKE THE BUTTON HANDLERS (F and J)
+			//TOUCH EVENT HANDLERS
+			n1.inputEnabled = true;
+			n2.inputEnabled = true;
+			n1.events.onInputDown.add(this.n1_down, this);
+			n2.events.onInputDown.add(this.n2_down, this);
+
+			//KB EVENT HANDLERS (F and J)
 			var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
 			var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
 			F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
@@ -103,6 +110,25 @@ Game.Run.prototype = {
 			//CREATE PRACTICE MANAGER
 			this.practice = new Practice(this);
 
+			if (this.mobile == true) {
+				right_ans = 'touch the right side of the screen'
+				left_ans = 'touch the left side of the screen'
+			} else {
+				right_ans = 'press the J key'
+				left_ans = 'press the F key'
+			}
+
+			ins_text = ["Which has more?  If there's more dots on the left " + left_ans + ", but if there's more dots on the right, " + right_ans + ".",
+											"Here, there's more dots on the right, so " + right_ans + ".",
+											"Here, there's more dots on the left, so " + left_ans + "."]
+
+			//stimuli to display during the instructions...
+			ins_params = [{'ns': [1, 3], 'CRESP': 'right'},
+										{'ns': [5, 2], 'CRESP': 'left'}];
+
+			//CREATE INSTRUCTIONS MANAGER
+			this.instructions = new Instructions(ins_text, ins_params, this);
+
 			//EXPERIMENTAL LOGIC CONTROL
 			this.signal.add(function () {
 				if (arguments[0] == 'trial') {
@@ -111,13 +137,14 @@ Game.Run.prototype = {
 						this.practice.check();
 					}
 					this.generate();
-
-
 				}
+
 				else if (arguments[0] == 'timeout') {
 					//log the missing response
 					this.grader.grade('NA', this.CRESP, 'NA');
 				}
+
+				//Mandatory
 				else if (arguments[0] == 'stimulus') {
 
 					var ivc = this.stimulus.next('i_or_c');
@@ -134,30 +161,26 @@ Game.Run.prototype = {
 					//starting RT
 					d = new Date();
 					this.start = d.getTime();
-
-
 				}
+
 				else if (arguments[0] == 'fixation') {
 					n1.visible = false;
 					n2.visible = false;
 					cross.visible = true;
-
-
 				}
+				//Mandatory
 				else if (arguments[0] == 'ISI') {
 					n1.visible = false;
 					n2.visible = false;
 					cross.visible = false;
 
+					//draw rectangles over the dots
 					n1.children[0].beginFill(0x00000, 1);
 					n2.children[0].beginFill(0x00000, 1);
-					//n1.drawCircle(0,0,100000);
-					n1.children[0].drawRect(0,0,960,600);
-					n2.children[0].drawRect(0,0,960,600);
-
-
-
+					n1.children[0].drawRect(0,0,350,600);
+					n2.children[0].drawRect(0,0,350,600);
 				}
+
 				else if (arguments[0] == 'end_task') {
 					this.trial_clock.stop();
 					this.quitGame();
@@ -165,7 +188,11 @@ Game.Run.prototype = {
 
 			}, this);
 
+		},
+
+		begin: function () {
 			//START IT UP!
+			this.difficulty.param_space.reset();
 			this.generate();
 			this.trial_clock.go();
 			this.trial_clock.next();
@@ -175,7 +202,13 @@ Game.Run.prototype = {
 			d = new Date();
 			RT = d.getTime() - this.start ;
 			this.grader.grade(user_resp, this.CRESP, RT);
-			this.trial_clock.reset();
+
+			if (this.instructions.complete == true) {
+				this.trial_clock.reset();
+			}
+			else {
+				this.instructions.check();
+			}
 		},
 
 		//click and button handlers
@@ -243,8 +276,7 @@ Game.Run.prototype = {
 				//Let them know it's done...
 				this.game.time.events.add(Phaser.Timer.SECOND * 1.5, function () {
 					t = "All done! Your score is " + this.difficulty.param_space.score;
-					endText = this.game.add.text(480, 100, t,
-																				{'font': '70px Arial', 'fill':'#fff'});
+					endText = this.game.add.text(480, 100, t, ins_style);
 					endText.anchor.x = 0.5
 				}, this);
 		},
@@ -256,12 +288,16 @@ Game.Run.prototype = {
 		render: function () {
 			//this will display the frame rate (should be 60...ish)
 			this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
+			//this.game.debug.text('trial: ' + this.trial_clock.trial, 2, 14, '#00ff00');
+
 		},
 
 		// draw circle function
 		genCircle: function(graphics, k){
+			graphics.lineStyle(5, 0x222222, 1);
+			graphics.drawRect(0, 0, 350, 600);
+			graphics.lineStyle(0, 0x000000, 1);
 			graphics.beginFill(0xF80A6, 1);
-			console.log(k);
 			circles = c[k];
 			for (i=0;i<circles.length;i++){
 				graphics.drawCircle( (circles[i][0]/2) , (circles[i][1]/2) , (circles[i][2]) );

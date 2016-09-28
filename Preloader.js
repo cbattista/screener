@@ -27,7 +27,7 @@ Game.Preloader.prototype = {
 
 	create: function () {
 		this.preloadBar.cropEnabled = false
-		this.state.start('Instructions')
+		this.state.start('Run')
 	},
 
 

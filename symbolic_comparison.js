@@ -85,6 +85,26 @@ Game.Run.prototype = {
       //attributes['con'] = ['con', 'incon', 3];
       this.stimulus = new Randomizer(stimulus_attributes);
 
+
+      if (this.mobile == true) {
+				right_ans = 'touch the right side of the screen'
+				left_ans = 'touch the left side of the screen'
+			} else {
+				right_ans = 'press the J key'
+				left_ans = 'press the F key'
+			}
+
+			ins_text = ["Which is bigger?  If the bigger number is on the left " + left_ans + ", but if the bigger number is on the right, " + right_ans + ".",
+											"Here, the bigger number is on the the right, so " + right_ans + ".",
+											"Here, the bigger number is on the left, so " + left_ans + "."]
+
+			//stimuli to display during the instructions...
+			ins_params = [{'ns': [1, 3], 'CRESP': 'right'},
+										{'ns': [5, 2], 'CRESP': 'left'}];
+
+			//CREATE INSTRUCTIONS MANAGER
+			this.instructions = new Instructions(ins_text, ins_params, this);
+
       //CREATE PRACTICE MANAGER
       this.practice = new Practice(this);
 
@@ -128,7 +148,11 @@ Game.Run.prototype = {
 
       }, this);
 
+    },
+
+    begin: function () {
       //START IT UP!
+      this.difficulty.param_space.reset();
       this.generate();
       this.trial_clock.go();
       this.trial_clock.next();
@@ -138,7 +162,14 @@ Game.Run.prototype = {
       d = new Date();
       RT = d.getTime() - this.start ;
       this.grader.grade(user_resp, this.CRESP, RT);
-      this.trial_clock.reset();
+
+      if (this.instructions.complete == true) {
+				this.trial_clock.reset();
+			}
+			else {
+				this.instructions.check();
+			}
+
     },
 
     //click and button handlers
@@ -210,7 +241,6 @@ Game.Run.prototype = {
                                         {'font': '70px Arial', 'fill':'#fff'});
           endText.anchor.x = 0.5
         }, this);
-        this.logger.downloadData();
     },
 
     update: function() {

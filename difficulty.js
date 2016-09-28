@@ -37,6 +37,7 @@ Grader = function(parent, streak_length, max_value){
 		this.parent.logger.inputData('easyness', this.easyness);
 		this.parent.logger.inputData('avg_easyness', this.streak);
 		this.parent.logger.inputData('practice', this.parent.practice.practice);
+		this.parent.logger.inputData('mobile', this.parent.mobile);
 		//log this trial's worth of data
 		this.parent.logger.sendData(this.parent.trial_clock.trial);
     this.signal.dispatch("grade");  //TODO - do we even use this anymore?
@@ -46,12 +47,13 @@ Grader = function(parent, streak_length, max_value){
   }
 };
 
-Param_Space = function(params, names, signal, logger) {
+Param_Space = function(params, names, signal, logger, grader) {
 	this.params = params;
 	this.names = names;
 	this.stuck = false;
 	this.score = 0;
 	this.logger = logger;
+	this.grader = grader;
 	//initialize indexes
 	this.indexes = [];
 	items = [];
@@ -342,6 +344,7 @@ Param_Space = function(params, names, signal, logger) {
 	}
 
 	this.reset = function () {
+		this.grader.Es = [];
 		for (var i=0; i<this.params.length; i++) {
 			this.indexes[i] = 0;
 		}
@@ -349,7 +352,7 @@ Param_Space = function(params, names, signal, logger) {
 };
 
 Difficulty = function(parent, params, names, search_params) {
-  this.param_space = new Param_Space(params, names, parent.signal, parent.logger);
+  this.param_space = new Param_Space(params, names, parent.signal, parent.logger, parent.grader);
 	this.search_params = search_params;
 	this.parent = parent;
   this.adjust = function(){
