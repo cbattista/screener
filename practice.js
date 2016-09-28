@@ -30,6 +30,7 @@ Practice = function(parent) {
 	this.incorrect.visible = false;
 
 	this.begin = function() {
+		this.parent.state = 'practice_' + this.attempts;
 		//show the first practice instructions screen
 		this.prac_text = this.parent.game.add.text(this.parent.game.world.centerX,
 										this.parent.game.world.centerY-300, this.instructions['practice'], ins_style);
@@ -96,7 +97,7 @@ Practice = function(parent) {
 			this.count = 0;
 			var p_fail = false;
 
-			if (p_acc > 0.8) {
+			if (p_acc >= 0.8) {
 				this.practice = false;
 				//reset acc, RT, and EZ list
 				text = this.instructions['practice_success'];
@@ -104,6 +105,8 @@ Practice = function(parent) {
 			}
 			else {
 				this.attempts += 1;
+				this.parent.state = 'practice_' + this.attempts;
+
 				if (this.attempts >= 3) {
 					text = this.instructions['practice_fail'];
 					p_fail = true;
@@ -151,6 +154,7 @@ Practice = function(parent) {
 	this.pass_function = function () {
 		this.prac_text.kill();
 		this.continue_button.kill();
+		this.parent.state = 'exp'
 		this.parent.trial_clock.restart();
 	};
 

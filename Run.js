@@ -19,7 +19,6 @@ Game.Run = function (game) {
 		this.physics   //  the physics manager (Phaser.Physics)
 		this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
 		this.signal = new Phaser.Signal();
-		this.logger = new Logger();
 		this.mobile = window.mobileAndTabletcheck();
 }
 
@@ -83,6 +82,10 @@ Game.Run.prototype = {
 			//trust me you will want these for debugging
 			var pause = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
 			pause.onDown.add(function () {this.game.pause = true; alert('pause');}, this);
+
+			//CREATE TRIAL DATA LOGGER
+			this.state = 'instructions';
+			this.logger = new Logger('nonsymbolic', this);
 
 			//CREATE ADAPTIVE DIFFICULTY MANAGER
 			names = ['number_size', 'ratio'];

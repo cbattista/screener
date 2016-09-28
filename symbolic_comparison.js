@@ -19,7 +19,7 @@ Game.Run = function (game) {
     this.physics   //  the physics manager (Phaser.Physics)
     this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
     this.signal = new Phaser.Signal();
-    this.logger = new Logger();
+    this.logger = new Logger('symbolic');
 
   };
 
