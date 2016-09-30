@@ -15,28 +15,63 @@
         <script src="Preloader.js"></script>
         <script src="instructions.js"></script>
         <script src="circles.js"></script>
+        <script src="sessions.js"></script>
         <script src="common.js"></script>
-        <script src="Run.js"></script>
+        <script src="symbolic.js"></script>
+        <script src="nonsymbolic.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
 
     </head>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDhe-myTpw0J-69sFmTlLtpe_-ZrVgUmdo",
+        authDomain: "daos-84628.firebaseapp.com",
+        databaseURL: "https://daos-84628.firebaseio.com",
+        storageBucket: "daos-84628.appspot.com",
+        messagingSenderId: "922274621965"
+      };
+      firebase.initializeApp(config);
+    </script>
 
-    <script type="text/javascript">
 
-    window.onload = function() {
+  <script>
+      window.onload = function () {
 
-      //create the game and the game states
-      var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'gameContainer')
+        // Listening for auth state changes.
+        // [START authstatelistener]
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            //create your phaser stuff
+            var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'gameContainer');
+            game.state.add('Boot', Game.Boot);
+            game.state.add('Preloader', Game.Preloader);
+            game.state.add('symbolic', Game.Symbolic);
+            game.state.add('nonsymbolic', Game.NonSymbolic);
 
-    	game.state.add('Boot', Game.Boot)
-    	game.state.add('Preloader', Game.Preloader)
-    	game.state.add('Run', Game.Run)
+            window.game = game;
 
-    	//	Now start the Boot state.
-    	game.state.start('Boot')
+            var users = firebase.database().ref('users/' + user.uid + '/current_task' );
+
+            //users.once('value').then(function(snapshot) {
+            users.once('value').then(function(snapshot){
+              current_task = snapshot.val();
+              //current_task = snapshot.val().current_task;
+              if (current_task != null) {
+                //	Now start the Boot state.
+                game.state.start('Boot', true,false, current_task);
+              } else {
+                begin_session();
+              }
+            });
+
+          } else {
+            window.location = 'login.html';
+          }
+        });
 
     }
-
-    </script>
+  </script>
 
     <body>
     </body>

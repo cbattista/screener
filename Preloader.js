@@ -10,8 +10,8 @@ Game.Preloader = function (game) {
 
 Game.Preloader.prototype = {
 
-	init: function (problem_set) {
-		this.problem_set = problem_set
+	init: function (task) {
+		this.task = task
 	},
 
 	preload: function () {
@@ -27,7 +27,8 @@ Game.Preloader.prototype = {
 
 	create: function () {
 		this.preloadBar.cropEnabled = false
-		this.state.start('Run')
+
+		this.state.start(this.task)
 	},
 
 

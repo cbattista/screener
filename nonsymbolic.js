@@ -1,4 +1,4 @@
-Game.Run = function (game) {
+Game.NonSymbolic = function (game) {
 
 		"use strict"
 
@@ -19,11 +19,10 @@ Game.Run = function (game) {
 		this.physics   //  the physics manager (Phaser.Physics)
 		this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
 		this.signal = new Phaser.Signal();
-		this.logger = new Logger();
 		this.mobile = window.mobileAndTabletcheck();
 }
 
-Game.Run.prototype = {
+Game.NonSymbolic.prototype = {
 
 		create: function() {
 			//set up the timing
@@ -83,6 +82,10 @@ Game.Run.prototype = {
 			//trust me you will want these for debugging
 			var pause = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
 			pause.onDown.add(function () {this.game.pause = true; alert('pause');}, this);
+
+			//CREATE TRIAL DATA LOGGER
+			this.state = 'instructions';
+			this.logger = new Logger('nonsymbolic', this);
 
 			//CREATE ADAPTIVE DIFFICULTY MANAGER
 			names = ['number_size', 'ratio'];
@@ -275,9 +278,7 @@ Game.Run.prototype = {
 				//this.logger.downloadData();
 				//Let them know it's done...
 				this.game.time.events.add(Phaser.Timer.SECOND * 1.5, function () {
-					t = "All done! Your score is " + this.difficulty.param_space.score;
-					endText = this.game.add.text(480, 100, t, ins_style);
-					endText.anchor.x = 0.5
+					next_task();
 				}, this);
 		},
 

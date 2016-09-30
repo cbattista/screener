@@ -5,6 +5,7 @@ Grader = function(parent, streak_length, max_value){
   this.signal = new Phaser.Signal();
 	this.streak_length= streak_length;
 	this.parent = parent;
+	this.streak = 'NaN';
 
   this.grade = function(user_resp, CRESP, RT) {
     if (user_resp == CRESP) {
@@ -27,15 +28,18 @@ Grader = function(parent, streak_length, max_value){
     for (var i=1; i<= this.streak_length; i++) {
       streak_sum += this.Es[l - i];
     }
-    this.streak = streak_sum / this.streak_length;
+
+		if (this.Es.length >= this.streak_length) {
+			this.streak = streak_sum / this.streak_length;
+			this.parent.logger.inputData('avg_easyness', this.streak);
+		}
 
 		//log ye relevant data
 		this.parent.logger.inputData('CRESP', CRESP);
 		this.parent.logger.inputData('user_resp', user_resp);
 		this.parent.logger.inputData('ACC', ACC);
 		this.parent.logger.inputData('RT', RT);
-		this.parent.logger.inputData('easyness', this.easyness);
-		this.parent.logger.inputData('avg_easyness', this.streak);
+		this.parent.logger.inputData('performance', this.easyness);
 		this.parent.logger.inputData('practice', this.parent.practice.practice);
 		this.parent.logger.inputData('mobile', this.parent.mobile);
 		//log this trial's worth of data
@@ -179,7 +183,10 @@ Param_Space = function(params, names, signal, logger, grader) {
 		}
 		else {
 			$('#console').html('Too many difficulty dimensions');
+			this.score = 'NA'
 		}
+
+		this.logger.log('summary', {'score' : this.score, 'ni': ni})
 
 		this.search();
 

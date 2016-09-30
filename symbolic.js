@@ -1,4 +1,4 @@
-Game.Run = function (game) {
+Game.Symbolic = function (game) {
 
     "use strict"
 
@@ -19,13 +19,18 @@ Game.Run = function (game) {
     this.physics   //  the physics manager (Phaser.Physics)
     this.rnd       //  the repeatable random number generator (Phaser.RandomDataGenerator)
     this.signal = new Phaser.Signal();
-    this.logger = new Logger();
+    this.mobile = window.mobileAndTabletcheck();
 
   };
 
-Game.Run.prototype = {
+Game.Symbolic.prototype = {
 
     create: function() {
+
+      //CREATE TRIAL DATA LOGGER
+      this.state = 'instructions';
+      this.logger = new Logger('symbolic', this);
+
       //set up the timing
       this.game.time.advancedTiming = true;
       this.fps = this.game.time.desiredFps;
@@ -236,10 +241,7 @@ Game.Run.prototype = {
         //this.logger.downloadData();
         //Let them know it's done...
         this.game.time.events.add(Phaser.Timer.SECOND * 1.5, function () {
-          t = "All done! Your score is " + this.difficulty.param_space.score;
-          endText = this.game.add.text(480, 100, t,
-                                        {'font': '70px Arial', 'fill':'#fff'});
-          endText.anchor.x = 0.5
+          next_task();
         }, this);
     },
 
