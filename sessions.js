@@ -50,6 +50,12 @@ function end_session() {
 	updates = {}
 	updates['current_task'] = null;
 	users.update(updates);
-	//sign the user out
-	firebase.auth().signOut();
+
+	//increment session counter
+	var p = firebase.database().ref('/users/' + uid + '/session_count').transaction(function(c) {
+		return c + 1;
+	});
+
+	//after increment, sign the user out - TODO - send them to a thank you page as well
+	p.then(function () {firebase.auth().signOut();})
 }
