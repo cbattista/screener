@@ -38,17 +38,19 @@
   <script>
       window.onload = function () {
 
-        // Listening for auth state changes.
+        // Listening for auth state changes
         // [START authstatelistener]
         firebase.auth().onAuthStateChanged(function(user) {
           if (user) {
-            //create your phaser stuff
+
+            //create your Phaser stuff
             var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'gameContainer');
             game.state.add('Boot', Game.Boot);
             game.state.add('Preloader', Game.Preloader);
             game.state.add('symbolic', Game.Symbolic);
             game.state.add('nonsymbolic', Game.NonSymbolic);
 
+            //add the game to the window so we can access it from wherever
             window.game = game;
 
             var users = firebase.database().ref('users/' + user.uid + '/current_task' );
@@ -73,6 +75,6 @@
     }
   </script>
 
-    <body>
+    <body style = 'background-color:black'>
     </body>
 </html>
