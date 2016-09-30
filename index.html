@@ -15,8 +15,10 @@
         <script src="Preloader.js"></script>
         <script src="instructions.js"></script>
         <script src="circles.js"></script>
+        <script src="sessions.js"></script>
         <script src="common.js"></script>
-        <script src="Run.js"></script>
+        <script src="symbolic.js"></script>
+        <script src="nonsymbolic.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
 
     </head>
@@ -39,16 +41,29 @@
         // Listening for auth state changes.
         // [START authstatelistener]
         firebase.auth().onAuthStateChanged(function(user) {
-
           if (user) {
-
             //create your phaser stuff
-            var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'gameContainer')
-            game.state.add('Boot', Game.Boot)
-            game.state.add('Preloader', Game.Preloader)
-            game.state.add('Run', Game.Run)
-            //	Now start the Boot state.
-            game.state.start('Boot')
+            var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'gameContainer');
+            game.state.add('Boot', Game.Boot);
+            game.state.add('Preloader', Game.Preloader);
+            game.state.add('symbolic', Game.Symbolic);
+            game.state.add('nonsymbolic', Game.NonSymbolic);
+
+            window.game = game;
+
+            var users = firebase.database().ref('users/' + user.uid + '/current_task' );
+
+            //users.once('value').then(function(snapshot) {
+            users.once('value').then(function(snapshot){
+              current_task = snapshot.val();
+              //current_task = snapshot.val().current_task;
+              if (current_task != null) {
+                //	Now start the Boot state.
+                game.state.start('Boot', true,false, current_task);
+              } else {
+                begin_session();
+              }
+            });
 
           } else {
             window.location = 'login.html';

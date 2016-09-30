@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>Dr. B's Number Challenge</title>
+        <script src="sessions.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
         <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Roboto+Mono" rel="stylesheet">      <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -60,6 +61,7 @@
      *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
      *    out, and that is where we update the UI.
      */
+
      function initApp() {
        // Listening for auth state changes.
        // [START authstatelistener]

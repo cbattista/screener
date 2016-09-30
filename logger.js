@@ -2,7 +2,8 @@ function Logger(task, parent) {
 	this.parent = parent;
 	var d = new Date();
 	this.session_id = d.getTime();
-	this.path = 'taskData/' + task + '/' + this.session_id;
+	uid = firebase.auth().currentUser.uid;
+	this.path = 'taskData/' + uid + '/' + task + '/' + this.session_id;
 	this.data = {};
 
 	this.inputData = function(field, value) {
@@ -17,6 +18,8 @@ function Logger(task, parent) {
 
 	this.sendData = function(trial) {
 		this.data["trial"] = trial;
+		console.log(this.data);
+		console.log(this.parent.state);
 		firebase.database().ref(this.path + '/' + this.parent.state + '/'
 														+ trial).set(this.data);
 		console.log(this.data);
