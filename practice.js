@@ -30,7 +30,7 @@ Practice = function(parent) {
 	this.incorrect.visible = false;
 
 	this.begin = function() {
-		this.parent.state = 'practice_' + this.attempts;
+		this.parent.screenerState = 'practice_' + this.attempts;
 		//show the first practice instructions screen
 		this.prac_text = this.parent.game.add.text(this.parent.game.world.centerX,
 										this.parent.game.world.centerY-300, this.instructions['practice'], ins_style);
@@ -105,7 +105,7 @@ Practice = function(parent) {
 			}
 			else {
 				this.attempts += 1;
-				this.parent.state = 'practice_' + this.attempts;
+				this.parent.screenerState = 'practice_' + this.attempts;
 
 				if (this.attempts >= 3) {
 					text = this.instructions['practice_fail'];
@@ -154,7 +154,7 @@ Practice = function(parent) {
 	this.pass_function = function () {
 		this.prac_text.kill();
 		this.continue_button.kill();
-		this.parent.state = 'exp'
+		this.parent.screenerState = 'exp'
 		this.parent.trial_clock.restart();
 	};
 

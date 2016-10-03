@@ -13,7 +13,7 @@ Game.Symbolic = function (game) {
     this.stage     //  the game stage (Phaser.Stage)
     this.time      //  the clock (Phaser.Time)
     this.tweens    //  the tween manager (Phaser.TweenManager)
-    this.state     //  the state manager (Phaser.StateManager)
+    this.screenerState     //  the state manager (Phaser.StateManager)
     this.world     //  the game world (Phaser.World)
     this.particles //  the particle manager (Phaser.Particles)
     this.physics   //  the physics manager (Phaser.Physics)
@@ -28,7 +28,7 @@ Game.Symbolic.prototype = {
     create: function() {
 
       //CREATE TRIAL DATA LOGGER
-      this.state = 'instructions';
+      this.screenerState = 'instructions';
       this.logger = new Logger('symbolic', this);
 
       //set up the timing

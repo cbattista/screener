@@ -19,8 +19,8 @@ function Logger(task, parent) {
 	this.sendData = function(trial) {
 		this.data["trial"] = trial;
 		console.log(this.data);
-		console.log(this.parent.state);
-		firebase.database().ref(this.path + '/' + this.parent.state + '/'
+		console.log(this.parent.screenerState);
+		firebase.database().ref(this.path + '/' + this.parent.screenerState + '/'
 														+ trial).set(this.data);
 		console.log(this.data);
 		this.data = {};

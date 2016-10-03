@@ -12,7 +12,7 @@ function begin_session() {
 			updates['current_task'] = task;
 			updates['tasks_to_play'] = order;
 			promise = users.update(updates).then();
-			window.game.state.start('Boot', true,false, task);
+			window.game.screenerState.start('Boot', true,false, task);
 
 			//increment the index
 			i = i + 1;
@@ -37,7 +37,7 @@ function next_task() {
 			task = tasks_to_play.pop();
 			updates['tasks_to_play'] = tasks_to_play;
 			users.update(updates);
-			window.game.state.start(task);
+			window.game.screenerState.start(task);
 		} else {
 			end_session();
 		}
