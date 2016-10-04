@@ -1,0 +1,77 @@
+<!doctype html>
+<html ng-app="adminApp">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Screener Admin</title>
+
+        <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Roboto+Mono" rel="stylesheet">      <!-- Latest compiled and minified CSS -->
+
+        <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+
+        <!-- AngularJS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
+        <!-- AngularFire -->
+        <script src="https://cdn.firebase.com/libs/angularfire/2.0.2/angularfire.min.js"></script>
+
+        <script src="adminApp.js"></script>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link href='css/screener.css' rel='stylesheet'>
+
+
+    </head>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDhe-myTpw0J-69sFmTlLtpe_-ZrVgUmdo",
+        authDomain: "daos-84628.firebaseapp.com",
+        databaseURL: "https://daos-84628.firebaseio.com",
+        storageBucket: "daos-84628.appspot.com",
+        messagingSenderId: "922274621965"
+      };
+      firebase.initializeApp(config);
+    </script>
+
+  <body ng-controller='userCtrl'>
+    <div class='container' style='background-color:#FFFFFF' id='userCreate'>
+      <div class="card-block">
+        <h1 class="card-header">Create a user</h1>
+      </div>
+      <div class="card-block" style='padding:1rem;'>
+        <div class="input-group">
+          <input type="text" class="form-control" name='email' id='email' placeholder="Username">
+          <br/>
+          <br/>
+          <input type="password" class="form-control" name='password' id='password' placeholder="Password">
+          <br/>
+          <br/>
+          <input type="text" class="form-control" name='role' id='role' placeholder="Role">
+          <br/>
+          <br/>
+          <input type="text" class="form-control" name='role' id='study' placeholder="Study [optional]">
+        </div>
+
+        <br/>
+        <button type="button" class="btn-primary" id='signin'>Create</button>
+    </div>
+  </div>
+
+    <div class='container' style='background-color:#FFFFFF' id='userTable'>
+    <h1>Users</h1>
+      <table class="table">
+        <tr>
+          <th>Name</th><th>Role</th><th>Session Count</th><th>Study</th>
+        </tr>
+        <tr ng-repeat="user in users">
+          <td>{{user.name}}</td>
+          <td>{{user.role}}</td>
+          <td>{{user.session_count}}</td>
+          <td>{{user.study}}</td>
+        </tr>
+      </table>
+    </div>
+
+  </body>
+
+</html>
