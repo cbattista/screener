@@ -22,7 +22,7 @@ createUser = function (name, password, role, study) {
     //add the role and study
     path = '/users/' + account.uid;
 
-    primaryApp.database().ref(path).set({'role': role, 'study':study, 'name':name});
+    primaryApp.database().ref(path).set({'role': role, 'study':study, 'name':name, 'created_on':new Date().getTime()});
     secondaryApp.auth().signOut();
 
   });

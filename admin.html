@@ -78,13 +78,14 @@
     <h1>Users</h1>
       <table class="table">
         <tr>
-          <th>Name</th><th>Role</th><th>Session Count</th><th>Study</th>
+          <th>Name</th><th>Role</th><th>Session Count</th><th>Study</th><th>Created On</th>
         </tr>
         <tr ng-repeat="user in users">
           <td>{{user.name}}</td>
           <td>{{user.role}}</td>
           <td>{{user.session_count}}</td>
           <td>{{user.study}}</td>
+          <td>{{user.created_on | date: "medium"}}</td>
         </tr>
       </table>
     </div>
