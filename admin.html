@@ -30,7 +30,24 @@
         storageBucket: "daos-84628.appspot.com",
         messagingSenderId: "922274621965"
       };
-      firebase.initializeApp(config);
+
+      var primaryApp = firebase.initializeApp(config);
+      var secondaryApp = firebase.initializeApp(config, "Secondary");
+
+    </script>
+
+    <script>
+    function create() {
+      name = document.getElementById('username').value;
+      password = document.getElementById('password').value;
+      role = document.getElementById('role').value;
+      study = document.getElementById('study').value;
+      createUser(name, password, role, study);
+    }
+    window.onload = function () {
+      document.getElementById('create').addEventListener('click', create, false);
+    };
+
     </script>
 
   <body ng-controller='userCtrl'>
@@ -40,10 +57,10 @@
       </div>
       <div class="card-block" style='padding:1rem;'>
         <div class="input-group">
-          <input type="text" class="form-control" name='email' id='email' placeholder="Username">
+          <input type="text" class="form-control" name='username' id='username' placeholder="Username">
           <br/>
           <br/>
-          <input type="password" class="form-control" name='password' id='password' placeholder="Password">
+          <input type="text" class="form-control" name='password' id='password' placeholder="Password">
           <br/>
           <br/>
           <input type="text" class="form-control" name='role' id='role' placeholder="Role">
@@ -53,7 +70,7 @@
         </div>
 
         <br/>
-        <button type="button" class="btn-primary" id='signin'>Create</button>
+        <button type="button" class="btn-primary" id='create'>Create</button>
     </div>
   </div>
 
