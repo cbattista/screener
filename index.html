@@ -19,6 +19,7 @@
         <script src="common.js"></script>
         <script src="symbolic.js"></script>
         <script src="nonsymbolic.js"></script>
+        <script src="ordinality.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
 
     </head>
@@ -36,8 +37,8 @@
 
 
   <script>
-      window.onload = function () {
 
+      window.onload = function () {
         // Listening for auth state changes.
         // [START authstatelistener]
         firebase.auth().onAuthStateChanged(function(user) {
@@ -48,6 +49,7 @@
             game.state.add('Preloader', Game.Preloader);
             game.state.add('symbolic', Game.Symbolic);
             game.state.add('nonsymbolic', Game.NonSymbolic);
+            game.state.add('ordinality', Game.Ordinality);
 
             window.game = game;
 
