@@ -30,7 +30,6 @@ Practice = function(parent) {
 	this.incorrect.visible = false;
 
 	this.begin = function() {
-		this.parent.state = 'practice_' + this.attempts;
 		//show the first practice instructions screen
 		this.prac_text = this.parent.game.add.text(this.parent.game.world.centerX,
 										this.parent.game.world.centerY-300, this.instructions['practice'], ins_style);
@@ -101,11 +100,12 @@ Practice = function(parent) {
 				this.practice = false;
 				//reset acc, RT, and EZ list
 				text = this.instructions['practice_success'];
+				this.parent.state = 'exp'
 				p_fail = false;
 			}
 			else {
 				this.attempts += 1;
-				this.parent.state = 'practice_' + this.attempts;
+				console.log(this.parent.state);
 
 				if (this.attempts >= 3) {
 					text = this.instructions['practice_fail'];
@@ -117,6 +117,9 @@ Practice = function(parent) {
 					this.ACC = 0;
 					this.practice = true;
 					text = this.instructions['practice_again'];
+					this.parent.state = 'practice_' + this.attempts;
+					//update the game state to reflect practice being repeated
+
 				}
 			}
 
@@ -142,6 +145,7 @@ Practice = function(parent) {
 																this.parent.game.world.centerX, this.parent.game.world.centerY,
 																this.cont, ins_style)
 
+
       }
 		}
 		//do another practice trial...
@@ -152,15 +156,14 @@ Practice = function(parent) {
 	};
 
 	this.pass_function = function () {
-		this.prac_text.kill();
+		//this.prac_text.kill();
 		this.continue_button.kill();
-		this.parent.state = 'exp'
 		this.parent.trial_clock.restart();
 	};
 
 	this.fail_function = function () {
-			this.prac_text.kill();
-			this.continue_button.kill();
+			//this.prac_text.kill();
+			//this.continue_button.kill();
 			this.parent.signal.dispatch('end_task');
 
 	};
