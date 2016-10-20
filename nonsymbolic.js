@@ -67,17 +67,13 @@ Game.NonSymbolic.prototype = {
 			n2.visible = false;
 			cross.visible = false;
 
-			//TOUCH EVENT HANDLERS
+			//TOUCH EVENT HANDLERS - NOTE - EVENTS WILL GET BOUND DUUING STIMULUS CREATION
 			n1.inputEnabled = true;
 			n2.inputEnabled = true;
-			n1.events.onInputDown.add(this.n1_down, this);
-			n2.events.onInputDown.add(this.n2_down, this);
 
-			//KB EVENT HANDLERS (F and J)
+			//KB EVENT HANDLERS (F and J) - NOTE - EVENTS WILL GET BOUND DURING STIMULUS CREATION
 			var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
 			var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
-			F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
-			J.onDown.add(this.n2_down, this);
 
 			//trust me you will want these for debugging
 			var pause = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
@@ -149,6 +145,12 @@ Game.NonSymbolic.prototype = {
 
 				//Mandatory
 				else if (arguments[0] == 'stimulus') {
+					//ACTIVATE EVENT HANDLERS
+					n1.events.onInputDown.addOnce(this.n1_down, this);
+					n2.events.onInputDown.addOnce(this.n2_down, this);
+					F.onDown.addOnce(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
+					J.onDown.addOnce(this.n2_down, this);
+
 
 					var ivc = this.stimulus.next('i_or_c');
 					var example = this.stimulus.next('example');

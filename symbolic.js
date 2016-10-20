@@ -62,8 +62,6 @@ Game.Symbolic.prototype = {
       //MAKE THE BUTTON HANDLERS (F and J)
       var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
       var J = this.game.input.keyboard.addKey(Phaser.KeyCode.J);
-      F.onDown.add(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
-      J.onDown.add(this.n2_down, this);
 
       //trust me you will want these for debugging
       var pause = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
@@ -127,6 +125,9 @@ Game.Symbolic.prototype = {
           this.grader.grade('NA', this.CRESP, 'NA');
         }
         else if (arguments[0] == 'stimulus') {
+          F.onDown.addOnce(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
+          J.onDown.addOnce(this.n2_down, this);
+          
           n1.children[0].setText(this.ns[0]); //TODO - make a proper extension of the button object
           n2.children[0].setText(this.ns[1]);
           n1.visible = true;
