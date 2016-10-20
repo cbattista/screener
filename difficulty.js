@@ -383,19 +383,34 @@ Difficulty = function(parent, params, names, search_params) {
       else {
         //first check accuracy
         if (easyness < 0 ) {
+
           this.param_space.adjust(this.search_params[0]);
-        } else {
-          if (easyness > this.search_params[1][0]) {
-            this.param_space.adjust(this.search_params[1][1]);
-          } else if (easyness > this.search_params[2][0]) {
-              this.param_space.adjust(this.search_params[2][1]);
-          }
-          else if (easyness > this.search_params[3][0]) {
-            //just hang out in this space...
-            this.param_space.adjust(this.search_params[3][1], true);
-          } else {
-            this.param_space.adjust([-1, -1]);
-          }
+
+        }
+				else {
+
+					//if we are just practicing, do not increase the params by much
+					if (this.parent.practice == true) {
+						this.param_space.adjust([1,0]);
+					}
+
+					else {
+
+						if (easyness > this.search_params[1][0]) {
+	            this.param_space.adjust(this.search_params[1][1]);
+	          }
+						else if (easyness > this.search_params[2][0]) {
+	              this.param_space.adjust(this.search_params[2][1]);
+	          }
+	          else if (easyness > this.search_params[3][0]) {
+	            //just hang out in this space...
+	            this.param_space.adjust(this.search_params[3][1], true);
+	          }
+						else {
+	            this.param_space.adjust([-1, -1]);
+	          }
+
+					}
 
         }
       }
