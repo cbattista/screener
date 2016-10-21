@@ -36,12 +36,12 @@ Game.Symbolic.prototype = {
       this.fps = this.game.time.desiredFps;
 
       //MAKE THE TRIAL CLOCK
-      durations = [0.5 * this.fps, 0.75 * this.fps, .75 * this.fps];
+      durations = [0.5 * this.fps, 0.75 * this.fps, 1.5 * this.fps];
       this.trial_clock = new TrialClock(this, durations,
                                         ['ISI', 'fixation', 'stimulus']);
 
       //MAKE THE STIMULI
-      var text_attrib = {font:'64px Arial', fill:'#FFFFFF', align:'center'};
+      var text_attrib = {font:'90px Arial', fill:'#FFFFFF', align:'center'};
       //create the numbers and fixation cross
       this.ns = ['N1', 'N2']; //just placeholder values
       var n1 = text_button(this.game, this, this.n1_down,
@@ -127,7 +127,7 @@ Game.Symbolic.prototype = {
         else if (arguments[0] == 'stimulus') {
           F.onDown.addOnce(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
           J.onDown.addOnce(this.n2_down, this);
-          
+
           n1.children[0].setText(this.ns[0]); //TODO - make a proper extension of the button object
           n2.children[0].setText(this.ns[1]);
           n1.visible = true;

@@ -84,6 +84,9 @@ Param_Space = function(params, names, signal, logger, grader) {
 	this.adjust = function (increments, random) {
 		//if we have an increment for each parameter
 		//adjust them all
+
+		random = true;
+		
 		if (increments.length == this.params.length) {
 			//determine whether we want to retain the order
 			for (var i=0; i<this.params.length; i++) {

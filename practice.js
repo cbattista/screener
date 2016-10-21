@@ -137,13 +137,13 @@ Practice = function(parent) {
 				space.onDown.addOnce(this.pass_function, this);
 				this.continue_button = text_button(this.parent.game, this, this.pass_function,
 																this.parent.game.world.centerX, this.parent.game.world.centerY,
-																this.cont, ins_style)
+																this.cont, ins_style);
 
 			} else {
 				space.onDown.addOnce(this.fail_function, this.parent);
 				this.continue_button = text_button(this.parent.game, this.parent, this.fail_function,
 																this.parent.game.world.centerX, this.parent.game.world.centerY,
-																this.cont, ins_style)
+																this.cont, ins_style);
 
 
       }
@@ -156,7 +156,7 @@ Practice = function(parent) {
 	};
 
 	this.pass_function = function () {
-		//this.prac_text.kill();
+		this.prac_text.kill();
 		this.continue_button.kill();
 		this.parent.trial_clock.restart();
 	};

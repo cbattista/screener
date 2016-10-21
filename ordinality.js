@@ -39,7 +39,8 @@ Game.Ordinality.prototype = {
 																				['ISI', 'fixation', 'stimulus']);
 
 			//MAKE THE STIMULI
-			var text_attrib = {font:'64px Arial', fill:'#FFFFFF', align:'center'};
+			var text_attrib = {font:'90px Arial', fill:'#FFFFFF', align:'center'};
+			var button_attrib = {font:'90px Arial', fill:'#FFFFFF', align:'center', backgroundColor:'#333333'};
 
       //create the numbers and fixation cross
 			this.number_text = '1 2 3'; //just placeholder values
@@ -48,7 +49,7 @@ Game.Ordinality.prototype = {
       x = game.world.height;
       y = game.world.width;
 
-      yoffs = game.world.centerY + (y / 4)
+      yoffs = game.world.centerY + (y / 6)
       xoffs = x / 4
 
       //YES and NO BUTTONS
@@ -56,10 +57,12 @@ Game.Ordinality.prototype = {
 
         this.yes_button = text_button(this.game, this, this.yes_down,
                         this.game.world.centerX + xoffs, yoffs,
-                        'yes', text_attrib);
+                        'YES', button_attrib);
+				//this.yes_button.children[0].setTextBounds(0, 0, 100, 100)
         this.no_button = text_button(this.game, this, this.no_down,
                         this.game.world.centerX - xoffs, yoffs,
-                        'no', text_attrib)
+                        'NO ', button_attrib);
+				//this.no_button.children[0].setTextBounds(0, 0, 100, 100);
       }
 
       this.yes_button.visible = false;
@@ -302,17 +305,5 @@ Game.Ordinality.prototype = {
 			this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
 			//this.game.debug.text('trial: ' + this.trial_clock.trial, 2, 14, '#00ff00');
 
-		},
-
-		// draw circle function
-		genCircle: function(graphics, k){
-			graphics.lineStyle(5, 0x222222, 1);
-			graphics.drawRect(0, 0, 350, 600);
-			graphics.lineStyle(0, 0x000000, 1);
-			graphics.beginFill(0xF80A6, 1);
-			circles = c[k];
-			for (i=0;i<circles.length;i++){
-				graphics.drawCircle( (circles[i][0]/2) , (circles[i][1]/2) , (circles[i][2]) );
-			}
 		}
 }

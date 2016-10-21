@@ -56,11 +56,17 @@ Instructions = function (text, params, parent) {
     //don't sum up the easyness
     this.parent.avg_easyness = undefined;
 
+    console.log('begin instructions check');
+    console.log('continue :' + this.continue());
+
     //handle the appropriate behavior when in instructions mode
     if (this.continue() == false) {
       //mark the instructions as complete
+      console.log('Continue Instructions');
       this.complete = true;
       if (this.parent.grader.ACC == 1) {
+        console.log('ins: correct')
+        console.log('move on to practice...');
         //remove practice text
         this.ins_text.destroy();
 
@@ -70,30 +76,34 @@ Instructions = function (text, params, parent) {
         //now, fire up practice...
         this.parent.practice.begin();
       } else {
+        console.log('incorrect, try again');
         this.complete = false;
+        this.parent.signal.dispatch('stimulus');
         this.incorrect();
       }
 
     } else {
       if (this.parent.grader.ACC == 1) {
         console.log('ins: correct!');
+        this.parent.signal.dispatch('stimulus');
         if (this.continue() == true) {
           this.next();
         }
       } else {
-        //TODO make the instruction text wiggle
-        console.log('ins: incorrect!');
+        this.complete = false;
+        //gotta call this to reset the one-shot event handlers
+        this.parent.signal.dispatch('stimulus');
         this.incorrect();
       }
     }
+
+    console.log('end instructions check');
+
   };
 
   this.incorrect = function () {
     //fun little animation to show they got it wrong...
     //this.parent.game.add.tween(this.ins_text).to({angle:2}, 100, Phaser.Easing.Cubic.InOut, true);
-
-
-
     t = this.parent.game.add.tween(this.ins_text);
     t.to({ x: this.ins_text.position.x + 5, angle:this.ins_text.angle + 5}, 150, function (k) {
                     return wiggle(k, .5, .5);
@@ -105,6 +115,8 @@ Instructions = function (text, params, parent) {
 
   this.continue = function () {
       //check if we've completed the instructions
+      console.log(this.params.length);
+      console.log(this.count);
       if (this.params.length > this.count) {
         return true;
       } else {
