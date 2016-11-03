@@ -31,12 +31,9 @@ Game.Ordinality.prototype = {
 			this.game.time.advancedTiming = true;
 			this.fps = this.game.time.desiredFps;
 
-      response_window = 3
-
 			//MAKE THE TRIAL CLOCK
-			durations = [0.5 * this.fps, 0.75 * this.fps, response_window * this.fps];
-			this.trial_clock = new TrialClock(this, durations,
-																				['ISI', 'fixation', 'stimulus']);
+			this.task = 'ordinality';
+			this.trial_clock = new TrialClock(this);
 
 			//MAKE THE STIMULI
 			var text_attrib = {font:'90px Arial', fill:'#FFFFFF', align:'center'};
@@ -63,10 +60,12 @@ Game.Ordinality.prototype = {
                         this.game.world.centerX - xoffs, yoffs,
                         'NO ', button_attrib);
 				//this.no_button.children[0].setTextBounds(0, 0, 100, 100);
+
+				this.yes_button.visible = false;
+	      this.no_button.visible = false;
+
       }
 
-      this.yes_button.visible = false;
-      this.no_button.visible = false;
 
       //NUMBERS
       var numbers = this.game.add.text(this.game.world.centerX, this.game.world.centerY, this.ns, text_attrib)
@@ -105,7 +104,7 @@ Game.Ordinality.prototype = {
 												[0.25, [1, 1, 1]], //if easyness > .25
 												[0.1, [1, -1]]
 											];
-			this.grader = new Grader(this, 5, response_window * 1000);
+			this.grader = new Grader(this, 5);
 			this.difficulty = new Difficulty(this, params, names, search_params);
 
 			//CREATE STIMULUS ATTRIBUTE RANDOMIZER

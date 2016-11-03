@@ -28,11 +28,8 @@ Game.NonSymbolic.prototype = {
 			//set up the timing
 			this.game.time.advancedTiming = true;
 			this.fps = this.game.time.desiredFps;
-
-			//MAKE THE TRIAL CLOCK
-			durations = [0.5 * this.fps, 0.75 * this.fps, 2 * this.fps];
-			this.trial_clock = new TrialClock(this, durations,
-																				['ISI', 'fixation', 'stimulus']);
+			this.task = 'nonsymbolic';
+			this.trial_clock = new TrialClock(this);
 
 			//MAKE THE STIMULI
 			var text_attrib = {font:'64px Arial', fill:'#FFFFFF', align:'center'};
@@ -95,7 +92,7 @@ Game.NonSymbolic.prototype = {
 												[0.25, [1, 1]], //if easyness > .25
 												[0.1, [1,-1]] //....
 											];
-			this.grader = new Grader(this, 5, 1.5 * 1000);
+			this.grader = new Grader(this, 5);
 			this.difficulty = new Difficulty(this, params, names, search_params);
 
 			//CREATE STIMULUS ATTRIBUTE RANDOMIZER

@@ -27,36 +27,43 @@ Game.Symbolic.prototype = {
 
     create: function() {
 
+      this.uid = firebase.auth().currentUser.uid;
+      this.db_ref = firebase.database().ref('settings').child(this.uid).child('symbolic');
+      this.task = 'symbolic';
       //CREATE TRIAL DATA LOGGER
       this.state = 'instructions';
       this.logger = new Logger('symbolic', this);
-
       //set up the timing
       this.game.time.advancedTiming = true;
       this.fps = this.game.time.desiredFps;
 
       //MAKE THE TRIAL CLOCK
-      durations = [0.5 * this.fps, 0.75 * this.fps, 1.5 * this.fps];
-      this.trial_clock = new TrialClock(this, durations,
-                                        ['ISI', 'fixation', 'stimulus']);
+
+      this.trial_clock = new TrialClock(this);
+      //this.db_ref.set(durations);
 
       //MAKE THE STIMULI
       var text_attrib = {font:'90px Arial', fill:'#FFFFFF', align:'center'};
       //create the numbers and fixation cross
       this.ns = ['N1', 'N2']; //just placeholder values
-      var n1 = text_button(this.game, this, this.n1_down,
+      var n1_button = text_button(this.game, this, this.n1_down,
                       this.game.world.centerX - 200, this.game.world.centerY - 32,
                       this.ns[0], text_attrib);
-      var n2 = text_button(this.game, this, this.n2_down,
+      var n2_button = text_button(this.game, this, this.n2_down,
                       this.game.world.centerX + 200, this.game.world.centerY - 32,
                       this.ns[1], text_attrib);
+
       var cross = this.game.add.text(this.game.world.centerX,
                   this.game.world.centerY, '*', text_attrib);
+
+      this.stimuli = this.game.add.group();
+      this.stimuli.add(n1_button);
+      this.stimuli.add(n2_button);
+
       cross.anchor.set(0.5, 0.5);
 
       //make everything invisible to start with
-      n1.visible = false;
-      n2.visible = false;
+      this.stimuli.visible = false;
       cross.visible = false;
 
       //MAKE THE BUTTON HANDLERS (F and J)
@@ -79,7 +86,7 @@ Game.Symbolic.prototype = {
                         [0.25, [1, 1]], //if easyness > .25
                         [0.1, [1,-1]] //....
                       ];
-      this.grader = new Grader(this, 5, 1.5 * 1000);
+      this.grader = new Grader(this, 5);
       this.difficulty = new Difficulty(this, params, names, search_params);
 
       //CREATE STIMULUS ATTRIBUTE RANDOMIZER
@@ -128,23 +135,20 @@ Game.Symbolic.prototype = {
           F.onDown.addOnce(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
           J.onDown.addOnce(this.n2_down, this);
 
-          n1.children[0].setText(this.ns[0]); //TODO - make a proper extension of the button object
-          n2.children[0].setText(this.ns[1]);
-          n1.visible = true;
-          n2.visible = true;
+          n1_button.children[0].setText(this.ns[0]); //TODO - make a proper extension of the button object
+          n2_button.children[0].setText(this.ns[1]);
+          this.stimuli.visible = true;
           cross.visible = false;
           //starting RT
           d = new Date();
           this.start = d.getTime();
         }
         else if (arguments[0] == 'fixation') {
-          n1.visible = false;
-          n2.visible = false;
+          this.stimuli.visible = false;
           cross.visible = true;
         }
         else if (arguments[0] == 'ISI') {
-          n1.visible = false;
-          n2.visible = false;
+          this.stimuli.visible = false;
           cross.visible = false;
         }
         else if (arguments[0] == 'end_task') {

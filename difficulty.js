@@ -1,11 +1,24 @@
 //EXPERIMENT FUNCTIONS
 Grader = function(parent, streak_length, max_value){
-	this.max_value = max_value;
   this.Es = [];
   this.signal = new Phaser.Signal();
 	this.streak_length= streak_length;
 	this.parent = parent;
 	this.streak = 'NaN';
+
+	db_ref = firebase.database().ref("settings")
+																.child(firebase.auth().currentUser.uid)
+																.child(parent.task)
+																.child("durations");
+
+	db_ref.on('value', function(snapshot) {
+			this.set_max_value(snapshot.val());
+		}, function(error) {}, this);
+
+	this.set_max_value = function (durations) {
+		console.log(durations);
+		this.max_value = durations['stimulus'] * 1000;
+	}
 
   this.grade = function(user_resp, CRESP, RT) {
     if (user_resp == CRESP) {
@@ -86,7 +99,7 @@ Param_Space = function(params, names, signal, logger, grader) {
 		//adjust them all
 
 		random = true;
-		
+
 		if (increments.length == this.params.length) {
 			//determine whether we want to retain the order
 			for (var i=0; i<this.params.length; i++) {
