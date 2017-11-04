@@ -26,9 +26,24 @@ function begin_session() {
 		});
 }
 
+function begin_neurodoro_session() {
+		const uid = firebase.auth().currentUser.uid;
+		const users = firebase.database().ref('/users/' + uid + '/');
+
+		const task = 'nonsymbolic';
+		let updates = {};
+		updates['current_task'] = task;
+		promise = users.update(updates).then();
+		window.game.state.start('Boot', true,false, task);
+}
+
+
+
+
 function next_task() {
 	uid = firebase.auth().currentUser.uid;
 	users = firebase.database().ref('/users/' + uid + '/');
+	console.log(uid);
 
 	users.once('value').then(function(snapshot) {
 		tasks_to_play = snapshot.val().tasks_to_play;
@@ -57,5 +72,6 @@ function end_session() {
 	});
 
 	//after increment, sign the user out - TODO - send them to a thank you page as well
+	alert('All done!  Thanks for contributing to our research!');
 	p.then(function () {firebase.auth().signOut();})
 }

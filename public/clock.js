@@ -5,18 +5,18 @@ TrialClock = function (parent) {
 	//signal - instance of Phaser.Signal() for dispatching event_names
 	//logger - instance of Logger() for storing data
 	this.trial = 1;
-	this.max_trials = 200;
+	this.max_trials = 150;
 	this.frame = 1;
 	this.count = 0;
 	this.inc = 0;
 	this.parent = parent;
 
 	durations = firebase.database().ref("settings")
-																		.child(parent.task).child('durations');
+					.child(parent.task).child('durations');
 
 	this.user_settings = firebase.database().ref("settings")
-																		.child(firebase.auth().currentUser.uid)
-																		.child(parent.task).child('durations');
+						   .child(firebase.auth().currentUser.uid)
+							.child(parent.task).child('durations');
 
 	//set the durations
 	durations.once('value', function (snapshot) {
@@ -25,20 +25,21 @@ TrialClock = function (parent) {
 
 	}, function(error) {console.log(error);}, this);
 
+    this.set_durations = function(d) {
+        this.event_names = Object.keys(d);
+        this.durations = Object.values(d);
+
+        fps = this.parent.fps;
+        for (i = 0; i < this.durations.length; i ++) {
+            this.durations[i] = this.durations[i] * this.parent.fps;
+        }
+    }
+
 	//bind the updating of the clock
 	this.user_settings.on('value', function(snapshot) {
 		this.set_durations(snapshot.val());
 	}, function(error) {console.log(error);}, this);
 
-	this.set_durations = function(d) {
-		this.event_names = Object.keys(d);
-		this.durations = Object.values(d);
-
-		fps = this.parent.fps;
-		for (i = 0; i < this.durations.length; i ++) {
-			this.durations[i] = this.durations[i] * this.parent.fps;
-		}
-	}
 
 	this.update = function () {
 		//$('#frame_counter').html(this.frame);

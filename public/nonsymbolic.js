@@ -45,28 +45,29 @@ Game.NonSymbolic.prototype = {
 			x_offs = (x - 700) / 4;
 			y_offs = (y - 600) / 2;
 			// adds graphics to prep for circle
-			var n1 = this.game.add.sprite(x_offs, y_offs);
-			var n2 = this.game.add.sprite(this.game.world.centerX + x_offs, y_offs);
-			n1.addChild(this.game.add.graphics(0, 0));
-			n2.addChild(this.game.add.graphics(0, 0));
+			this.n1 = this.game.add.sprite(x_offs, y_offs);
+			this.n2 = this.game.add.sprite(this.game.world.centerX + x_offs, y_offs);
+
+			this.n1.addChild(this.game.add.graphics(0, 0));
+			this.n2.addChild(this.game.add.graphics(0, 0));
 
 			// color of circle
-			n1.children[0].beginFill(0xF80A6, 1);
-			n2.children[0].beginFill(0xF80A6, 1);
+			this.n1.children[0].beginFill(0xF80A6, 1);
+			this.n2.children[0].beginFill(0xF80A6, 1);
 
-			var cross = this.game.add.text(this.game.world.centerX,
+			this.cross = this.game.add.text(this.game.world.centerX,
 									this.game.world.centerY, '*', text_attrib);
 
-			cross.anchor.set(0.5, 0.5);
+			this.cross.anchor.set(0.5, 0.5);
 
 			//make everything invisible to start with
-			n1.visible = false;
-			n2.visible = false;
-			cross.visible = false;
+			this.n1.visible = false;
+			this.n2.visible = false;
+			this.cross.visible = false;
 
 			//TOUCH EVENT HANDLERS - NOTE - EVENTS WILL GET BOUND DUUING STIMULUS CREATION
-			n1.inputEnabled = true;
-			n2.inputEnabled = true;
+			this.n1.inputEnabled = true;
+			this.n2.inputEnabled = true;
 
 			//KB EVENT HANDLERS (F and J) - NOTE - EVENTS WILL GET BOUND DURING STIMULUS CREATION
 			var F = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
@@ -88,9 +89,9 @@ Game.NonSymbolic.prototype = {
 			params[1] = [0.25, 0.33, 0.5, 0.66, 0.75, 0.75, 0.9, 0.9]; //ratio
 			//how to scale the difficulty
 			search_params = [[-1, -1], //if incorrect
-												[0.5, [2, 2]], //if easyness > 0.5
-												[0.25, [1, 1]], //if easyness > .25
-												[0.1, [1,-1]] //....
+												[0.5, [1, 1]], //if easyness > 0.5
+												[0.25, [.5, .5]], //if easyness > .25
+												[0.1, [.5,-1]] //....
 											];
 			this.grader = new Grader(this, 5);
 
@@ -145,8 +146,8 @@ Game.NonSymbolic.prototype = {
 				//Mandatory
 				else if (arguments[0] == 'stimulus') {
 					//ACTIVATE EVENT HANDLERS
-					n1.events.onInputDown.addOnce(this.n1_down, this);
-					n2.events.onInputDown.addOnce(this.n2_down, this);
+					this.n1.events.onInputDown.addOnce(this.n1_down, this);
+					this.n2.events.onInputDown.addOnce(this.n2_down, this);
 					F.onDown.addOnce(this.n1_down, this); //TODO - make these one-shots to avoid button mashing
 					J.onDown.addOnce(this.n2_down, this);
 
@@ -156,33 +157,33 @@ Game.NonSymbolic.prototype = {
 					c1 = this.ns[0] + ivc + example;
 					c2 = this.ns[1] + ivc + example;
 
-					this.genCircle(n1.children[0], c1);
-					this.genCircle(n2.children[0], c2);
+					this.genCircle(this.n1.children[0], c1);
+					this.genCircle(this.n2.children[0], c2);
 
-					n1.visible = true;
-					n2.visible = true;
-					cross.visible = false;
+					this.n1.visible = true;
+					this.n2.visible = true;
+					this.cross.visible = false;
 					//starting RT
 					d = new Date();
 					this.start = d.getTime();
 				}
 
 				else if (arguments[0] == 'fixation') {
-					n1.visible = false;
-					n2.visible = false;
-					cross.visible = true;
+					this.n1.visible = false;
+					this.n2.visible = false;
+					this.cross.visible = true;
 				}
 				//Mandatory
 				else if (arguments[0] == 'ISI') {
-					n1.visible = false;
-					n2.visible = false;
-					cross.visible = false;
+					this.n1.visible = false;
+					this.n2.visible = false;
+					this.cross.visible = false;
 
 					//draw rectangles over the dots
-					n1.children[0].beginFill(0x00000, 1);
-					n2.children[0].beginFill(0x00000, 1);
-					n1.children[0].drawRect(0,0,350,600);
-					n2.children[0].drawRect(0,0,350,600);
+					this.n1.children[0].beginFill(0x00000, 1);
+					this.n2.children[0].beginFill(0x00000, 1);
+					this.n1.children[0].drawRect(0,0,350,600);
+					this.n2.children[0].drawRect(0,0,350,600);
 				}
 
 				else if (arguments[0] == 'end_task') {
@@ -226,7 +227,6 @@ Game.NonSymbolic.prototype = {
 
 		generate: function () {
 				//determine what the stimuli for a given trial should be
-				console.log('generate!');
 
 				n1 = this.difficulty.param_space.get(0);
 				n2 = n1 / this.difficulty.param_space.get(1);
@@ -304,7 +304,7 @@ Game.NonSymbolic.prototype = {
 			graphics.beginFill(0xF80A6, 1);
 			circles = c[k];
 			for (i=0;i<circles.length;i++){
-				graphics.drawCircle( (circles[i][0]/2) , (circles[i][1]/2) , (circles[i][2]) );
+				graphics.drawCircle((circles[i][0]/2), (circles[i][1]/2), (circles[i][2]));
 			}
 		}
 }

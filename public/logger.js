@@ -20,7 +20,6 @@ function Logger(task, parent) {
 	this.sendData = function(trial) {
 		this.data["trial"] = trial;
 
-		console.log(this.data);
 		if ('diff3' in this.data) {
 			var avg_diff = (this.data['diff1'] + this.data['diff2'] + this.data['diff3']) / 3;
 		} else {
@@ -33,7 +32,9 @@ function Logger(task, parent) {
 		obj = {'difficulty' : avg_diff, 'performance' : perf};
 
 		argString = "d=" + avg_diff +  "&p=" + perf;
-		console.log(argString);
+
+        console.log(argString)
+
 		window.postMessage(argString, '*');
 
 		firebase.database().ref(this.path + '/' + this.parent.state + '/'

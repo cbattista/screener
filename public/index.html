@@ -20,7 +20,6 @@
         <script src="symbolic.js"></script>
         <script src="nonsymbolic.js"></script>
         <script src="ordinality.js"></script>
-        <script src="number_to_line.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
 
     </head>
@@ -51,7 +50,7 @@
             game.state.add('symbolic', Game.Symbolic);
             game.state.add('nonsymbolic', Game.NonSymbolic);
             game.state.add('ordinality', Game.Ordinality);
-            game.state.add('number_to_line', Game.Number_To_Line);
+            //game.state.add('number_to_line', Game.Number_To_Line);
 
             window.game = game;
 
@@ -65,7 +64,7 @@
                 //	Now start the Boot state.
                 game.state.start('Boot', true,false, current_task);
               } else {
-                begin_session();
+                begin_neurodoro_session();
               }
             });
 

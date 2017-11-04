@@ -154,7 +154,6 @@ Game.Ordinality.prototype = {
 				//Mandatory
 				else if (arguments[0] == 'stimulus') {
           numbers.setText(this.number_text);
-
 					//ACTIVATE EVENT HANDLERS
 					F.onDown.addOnce(this.no_down, this); //TODO - make these one-shots to avoid button mashing
 					J.onDown.addOnce(this.yes_down, this);

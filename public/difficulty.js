@@ -7,18 +7,18 @@ Grader = function(parent, streak_length, max_value){
 	this.streak = 'NaN';
 
 	db_ref = firebase.database().ref("settings")
-																.child(firebase.auth().currentUser.uid)
-																.child(parent.task)
-																.child("durations");
+    			.child(firebase.auth().currentUser.uid)
+    			.child(parent.task)
+    			.child("durations");
+
+
+    this.set_max_value = function (durations) {
+		this.max_value = durations['stimulus'] * 1000;
+	}
 
 	db_ref.on('value', function(snapshot) {
 			this.set_max_value(snapshot.val());
 		}, function(error) {}, this);
-
-	this.set_max_value = function (durations) {
-		console.log(durations);
-		this.max_value = durations['stimulus'] * 1000;
-	}
 
   this.grade = function(user_resp, CRESP, RT) {
     if (user_resp == CRESP) {
@@ -108,8 +108,6 @@ Param_Space = function(params, names, signal, logger, grader) {
 
 		random = true;
 
-    console.log("adjusting with increments: " + increments);
-
 		if (increments.length == this.params.length) {
 			//determine whether we want to retain the order
 			for (var i=0; i<this.params.length; i++) {
@@ -154,7 +152,6 @@ Param_Space = function(params, names, signal, logger, grader) {
 	this.check_indexes = function () {
 		//ensure that the indexes have not passed into illegal values
 		maxed_sum = 0;
-    console.log("check indexes");
 
 		for (var i=0; i<this.params.length; i++) {
 			//hold at max if too high
@@ -183,7 +180,7 @@ Param_Space = function(params, names, signal, logger, grader) {
 		}
 		else {
 			if (maxed_sum == this.indexes.length) {
-				this.sticking_point();
+				//this.sticking_point();
 			}
 		}
 
@@ -373,7 +370,6 @@ Param_Space = function(params, names, signal, logger, grader) {
 	this.get = function (p) {
 		index = this.indexes[p];
 		value = this.params[p][Math.round(index)];
-    console.log('diff index: ' + index)
 		this.logger.inputData(this.names[p], value);
 		return value;
 	}
@@ -396,7 +392,6 @@ Difficulty = function(parent, params, names, search_params, end) {
   this.adjust = function(){
     easyness = this.parent.grader.easyness;
 		//easier to assume we are not stuck, can overwrite later
-    console.log('difficulty.adjust');
 		this.parent.logger.inputData('stuck', false);
 
 
@@ -408,7 +403,6 @@ Difficulty = function(parent, params, names, search_params, end) {
     }
     else {
       //sticking point?
-      console.log('streak: ' + this.parent.grader.streak);
 
       if (this.end == true) {
 
@@ -416,7 +410,6 @@ Difficulty = function(parent, params, names, search_params, end) {
         if (this.parent.grader.streak < 0) {
           this.param_space.sticking_point();
           this.parent.logger.inputData('stuck', true);
-          console.log('really struggling');
         }
       }
 
